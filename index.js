@@ -96,6 +96,10 @@ var JUnitReporter = function(config, basePath, urlRoot, emitter, logger, helper)
       classname: (pkgName ? pkgName + ' ' : '') + browser.name + '.' + result.suite.join(' ').replace(/\./g, '_')
     });
 
+    if (result.skipped) {
+      spec.ele('skipped');
+    }
+
     if (!result.success) {
       result.log.forEach(function(err) {
         spec.ele('failure', {type: ''}, formatError(err));
