@@ -4,7 +4,7 @@ var fs = require('fs');
 var builder = require('xmlbuilder');
 
 
-var JUnitReporter = function(config, emitter, logger, helper, formatError) {
+var JUnitReporter = function(baseReporterDecorator, config, emitter, logger, helper, formatError) {
   var outputFile = config.outputFile;
   var pkgName = config.suite;
   var log = logger.create('reporter.junit');
@@ -13,8 +13,13 @@ var JUnitReporter = function(config, emitter, logger, helper, formatError) {
   var suites;
   var pendingFileWritings = 0;
   var fileWritingFinished = function() {};
+  var allMessages = [];
 
-  this.adapters = [];
+  baseReporterDecorator(this);
+
+  this.adapters = [function(msg) {
+    allMessages.push(msg);
+  }];
 
   this.onRunStart = function(browsers) {
     suites = {};
@@ -39,7 +44,7 @@ var JUnitReporter = function(config, emitter, logger, helper, formatError) {
     suite.att('failures', result.failed);
     suite.att('time', result.netTime / 1000);
 
-    suite.ele('system-out');
+    suite.ele('system-out').dat(allMessages.join() + '\n');
     suite.ele('system-err');
   };
 
@@ -62,9 +67,10 @@ var JUnitReporter = function(config, emitter, logger, helper, formatError) {
     });
 
     suites = xml = null;
+    allMessages.length = 0;
   };
 
-  this.onSpecComplete = function(browser, result) {
+  this.specSuccess = this.specSkipped = this.specFailure = function(browser, result) {
     var spec = suites[browser.id].ele('testcase', {
       name: result.description, time: result.time / 1000,
       classname: (pkgName ? pkgName + ' ' : '') + browser.name + '.' + result.suite.join(' ').replace(/\./g, '_')
@@ -92,7 +98,8 @@ var JUnitReporter = function(config, emitter, logger, helper, formatError) {
   });
 };
 
-JUnitReporter.$inject = ['config.junitReporter', 'emitter', 'logger', 'helper', 'formatError'];
+JUnitReporter.$inject = ['baseReporterDecorator', 'config.junitReporter', 'emitter', 'logger',
+    'helper', 'formatError'];
 
 // PUBLISH DI MODULE
 module.exports = {
