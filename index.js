@@ -4,33 +4,7 @@ var fs = require('fs');
 var builder = require('xmlbuilder');
 
 
-// TODO(vojta): refactor this, make it a provided object
-var createErrorFormatter = function(basePath, urlRoot) {
-  var URL_REGEXP = new RegExp('http:\\/\\/[^\\/]*' + urlRoot.replace(/\//g, '\\/') +
-                              '(base|absolute)([^\\?\\s]*)(\\?[0-9]*)?', 'g');
-
-  return function(msg, indentation) {
-    // remove domain and timestamp from source files
-    // and resolve base path / absolute path urls into absolute path
-    msg = msg.replace(URL_REGEXP, function(full, prefix, path) {
-      if (prefix === 'base') {
-        return basePath + path;
-      } else if (prefix === 'absolute') {
-        return path;
-      }
-    });
-
-    // indent every line
-    if (indentation) {
-      msg = indentation + msg.replace(/\n/g, '\n' + indentation);
-    }
-
-    return msg + '\n';
-  };
-};
-
-var JUnitReporter = function(config, basePath, urlRoot, emitter, logger, helper) {
-  var errorFormatter = createErrorFormatter(basePath, urlRoot);
+var JUnitReporter = function(config, emitter, logger, helper, formatError) {
   var outputFile = config.outputFile;
   var pkgName = config.suite;
   var log = logger.create('reporter.junit');
@@ -118,8 +92,7 @@ var JUnitReporter = function(config, basePath, urlRoot, emitter, logger, helper)
   });
 };
 
-JUnitReporter.$inject = ['config.junitReporter', 'config.basePath', 'config.urlRoot', 'emitter',
-    'logger', 'helper'];
+JUnitReporter.$inject = ['config.junitReporter', 'emitter', 'logger', 'helper', 'formatError'];
 
 // PUBLISH DI MODULE
 module.exports = {
