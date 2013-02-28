@@ -20,7 +20,7 @@
     "xmlbuilder": "0.4.2"
   },
   "peerDependencies": {
-    "testacular": "~0.5"
+    "testacular": "~0.7"
   },
   "license": "MIT"
 }
