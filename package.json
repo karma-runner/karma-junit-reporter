@@ -1,17 +1,17 @@
 {
-  "name": "testacular-junit-reporter",
+  "name": "karma-junit-reporter",
   "version": "0.0.1",
-  "description": "A Testacular plugin. Report results in junit xml format.",
+  "description": "A Karma plugin. Report results in junit xml format.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/testacular/testacular-junit-reporter.git"
+    "url": "git://github.com/karma-runner/karma-junit-reporter.git"
   },
   "keywords": [
-    "testacular-plugin",
+    "karma-plugin",
     "reporter",
     "junit"
   ],
@@ -20,7 +20,7 @@
     "xmlbuilder": "0.4.2"
   },
   "peerDependencies": {
-    "testacular": "~0.7"
+    "karma": "~0.9"
   },
   "license": "MIT"
 }
