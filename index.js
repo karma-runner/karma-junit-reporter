@@ -42,7 +42,7 @@ var JUnitReporter = function(baseReporterDecorator, config, emitter, logger, hel
     suite.att('tests', result.total);
     suite.att('errors', result.disconnected || result.error ? 1 : 0);
     suite.att('failures', result.failed);
-    suite.att('time', result.netTime / 1000);
+    suite.att('time', (result.netTime || 0) / 1000);
 
     suite.ele('system-out').dat(allMessages.join() + '\n');
     suite.ele('system-err');
@@ -72,7 +72,7 @@ var JUnitReporter = function(baseReporterDecorator, config, emitter, logger, hel
 
   this.specSuccess = this.specSkipped = this.specFailure = function(browser, result) {
     var spec = suites[browser.id].ele('testcase', {
-      name: result.description, time: result.time / 1000,
+      name: result.description, time: ((result.time || 0) / 1000),
       classname: (pkgName ? pkgName + ' ' : '') + browser.name + '.' + result.suite.join(' ').replace(/\./g, '_')
     });
 
