@@ -28,5 +28,9 @@
     "grunt-npm": "~0.0.2",
     "grunt-bump": "~0.0.7",
     "grunt-auto-release": "~0.0.2"
-  }
+  },
+  "contributors": [
+    "Friedel Ziegelmayer <friedel.ziegelmayer@gmail.com>",
+    "Trey Hyde <thyde@centraldesktop.com>"
+  ]
 }
