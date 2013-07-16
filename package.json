@@ -12,7 +12,7 @@
   },
   "keywords": [
     "karma-plugin",
-    "reporter",
+    "karma-reporter",
     "junit"
   ],
   "author": "Vojta Jina <vojta.jina@gmail.com>",
