@@ -8,8 +8,8 @@ The easiest way is to keep `karma-junit-reporter` as a devDependency in your `pa
 ```json
 {
   "devDependencies": {
-    "karma": "~0.9",
-    "karma-junit-reporter": "~0.0.1"
+    "karma": "~0.10",
+    "karma-junit-reporter": "~0.1"
   }
 }
 ```
