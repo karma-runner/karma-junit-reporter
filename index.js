@@ -22,17 +22,16 @@ var JUnitReporter = function(baseReporterDecorator, config, emitter, logger, hel
   }];
 
   this.onRunStart = function(browsers) {
-    suites = {};
+    suites = Object.create(null);
     xml = builder.create('testsuites');
+  };
 
-    var suite;
+  this.onBrowserStart = function(browser) {
     var timestamp = (new Date()).toISOString().substr(0, 19);
-    browsers.forEach(function(browser) {
-      suite = suites[browser.id] = xml.ele('testsuite', {
-        name: browser.name, 'package': pkgName, timestamp: timestamp, id: 0, hostname: os.hostname()
-      });
-      suite.ele('properties').ele('property', {name: 'browser.fullName', value: browser.fullName});
+    var suite = suites[browser.id] = xml.ele('testsuite', {
+      name: browser.name, 'package': pkgName, timestamp: timestamp, id: 0, hostname: os.hostname()
     });
+    suite.ele('properties').ele('property', {name: 'browser.fullName', value: browser.fullName});
   };
 
   this.onBrowserComplete = function(browser) {
