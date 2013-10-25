@@ -3,17 +3,23 @@ var path = require('path');
 var fs = require('fs');
 var builder = require('xmlbuilder');
 
-
 var JUnitReporter = function(baseReporterDecorator, config, emitter, logger, helper, formatError) {
-  var outputFile = config.outputFile;
+  var outputDir = config.outputDir;
   var pkgName = config.suite;
   var log = logger.create('reporter.junit');
 
-  var xml;
   var suites;
   var pendingFileWritings = 0;
   var fileWritingFinished = function() {};
   var allMessages = [];
+
+  if (!outputDir) {
+    throw new Error('You must set an output directory for JUnitReporter via the outputDir config property');
+  }
+
+  if (outputDir.substr(-1) != path.sep) {
+    outputDir += path.sep;
+  }
 
   baseReporterDecorator(this);
 
@@ -23,21 +29,26 @@ var JUnitReporter = function(baseReporterDecorator, config, emitter, logger, hel
 
   this.onRunStart = function(browsers) {
     suites = {};
-    xml = builder.create('testsuites');
 
     var suite;
     var timestamp = (new Date()).toISOString().substr(0, 19);
     browsers.forEach(function(browser) {
-      suite = suites[browser.id] = xml.ele('testsuite', {
-        name: browser.name, 'package': pkgName, timestamp: timestamp, id: 0, hostname: os.hostname()
-      });
-      suite.ele('properties').ele('property', {name: 'browser.fullName', value: browser.fullName});
+
+      pendingFileWritings++;
+
+      suite = suites[browser.id] = builder.create('testsuite');
+      suite.att('name', pkgName ? pkgName + ' / ' + browser.name : browser.name)
+           .att('timestamp', timestamp)
+           .att('hostname', os.hostname());
+      suite.ele('properties')
+           .ele('property', {name: 'browser.fullName', value: browser.fullName});
     });
   };
 
   this.onBrowserComplete = function(browser) {
     var suite = suites[browser.id];
     var result = browser.lastResult;
+    var outputFile = outputDir + 'TEST-' + browser.name.replace(/ /g, '_') + '.xml';
 
     suite.att('tests', result.total);
     suite.att('errors', result.disconnected || result.error ? 1 : 0);
@@ -46,14 +57,10 @@ var JUnitReporter = function(baseReporterDecorator, config, emitter, logger, hel
 
     suite.ele('system-out').dat(allMessages.join() + '\n');
     suite.ele('system-err');
-  };
 
-  this.onRunComplete = function() {
-    var xmlToOutput = xml;
+    helper.mkdirIfNotExists(outputDir, function() {
 
-    pendingFileWritings++;
-    helper.mkdirIfNotExists(path.dirname(outputFile), function() {
-      fs.writeFile(outputFile, xmlToOutput.end({pretty: true}), function(err) {
+      fs.writeFile(outputFile, suite.end({pretty: true}), function(err) {
         if (err) {
           log.warn('Cannot write JUnit xml\n\t' + err.message);
         } else {
@@ -65,15 +72,18 @@ var JUnitReporter = function(baseReporterDecorator, config, emitter, logger, hel
         }
       });
     });
+  };
 
-    suites = xml = null;
+  this.onRunComplete = function() {
+    suites = null;
     allMessages.length = 0;
   };
 
   this.specSuccess = this.specSkipped = this.specFailure = function(browser, result) {
     var spec = suites[browser.id].ele('testcase', {
-      name: result.description, time: ((result.time || 0) / 1000),
-      classname: (pkgName ? pkgName + ' ' : '') + browser.name + '.' + result.suite.join(' ').replace(/\./g, '_')
+      name: result.description,
+      time: ((result.time || 0) / 1000),
+      classname: (pkgName ? pkgName + '.' : '') + result.suite.join(' ').replace(/\./g, '_')
     });
 
     if (result.skipped) {
