@@ -13,6 +13,10 @@ var JUnitReporter = function(baseReporterDecorator, config, emitter, logger, hel
   var fileWritingFinished = function() {};
   var allMessages = [];
 
+  if (!outputDir) {
+    throw new Error('You must set an output directory for JUnitReporter via the outputDir config property');
+  }
+
   if (outputDir.substr(-1) != path.sep) {
     outputDir += path.sep;
   }
