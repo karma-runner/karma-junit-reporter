@@ -1,4 +1,5 @@
 var os = require('os');
+var path = require('path');
 var fs = require('fs');
 var builder = require('xmlbuilder');
 
@@ -12,8 +13,8 @@ var JUnitReporter = function(baseReporterDecorator, config, emitter, logger, hel
   var fileWritingFinished = function() {};
   var allMessages = [];
 
-  if (outputDir.substr(-1) != '/') {
-    outputDir += '/';
+  if (outputDir.substr(-1) != path.sep) {
+    outputDir += path.sep;
   }
 
   baseReporterDecorator(this);
