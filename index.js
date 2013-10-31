@@ -8,7 +8,7 @@ var DEFAULT_JUNIT_REPORTER_CONFIG = {
   suite: ''
 };
 
-var JUnitReporter = function(baseReporterDecorator, config, emitter, logger, helper, formatError) {
+var JUnitReporter = function(baseReporterDecorator, config, logger, helper, formatError) {
   config = config || DEFAULT_JUNIT_REPORTER_CONFIG;
 
   var outputFile = config.outputFile;
@@ -92,19 +92,18 @@ var JUnitReporter = function(baseReporterDecorator, config, emitter, logger, hel
     }
   };
 
-  // TODO(vojta): move to onExit
   // wait for writing all the xml files, before exiting
-  emitter.on('exit', function(done) {
+  this.onExit = function(done) {
     if (pendingFileWritings) {
       fileWritingFinished = done;
     } else {
       done();
     }
-  });
+  };
 };
 
-JUnitReporter.$inject = ['baseReporterDecorator', 'config.junitReporter', 'emitter', 'logger',
-    'helper', 'formatError'];
+JUnitReporter.$inject = ['baseReporterDecorator', 'config.junitReporter', 'logger', 'helper',
+    'formatError'];
 
 // PUBLISH DI MODULE
 module.exports = {
