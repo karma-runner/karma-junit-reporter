@@ -3,8 +3,14 @@ var path = require('path');
 var fs = require('fs');
 var builder = require('xmlbuilder');
 
+var DEFAULT_JUNIT_REPORTER_CONFIG = {
+  outputFile: 'test-results.xml',
+  suite: ''
+};
 
 var JUnitReporter = function(baseReporterDecorator, config, emitter, logger, helper, formatError) {
+  config = config || DEFAULT_JUNIT_REPORTER_CONFIG;
+
   var outputFile = config.outputFile;
   var pkgName = config.suite;
   var log = logger.create('reporter.junit');
