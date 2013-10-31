@@ -3,17 +3,13 @@ var path = require('path');
 var fs = require('fs');
 var builder = require('xmlbuilder');
 
-var DEFAULT_JUNIT_REPORTER_CONFIG = {
-  outputFile: 'test-results.xml',
-  suite: ''
-};
 
 var JUnitReporter = function(baseReporterDecorator, config, logger, helper, formatError) {
-  config = config || DEFAULT_JUNIT_REPORTER_CONFIG;
-
-  var outputFile = config.outputFile;
-  var pkgName = config.suite;
   var log = logger.create('reporter.junit');
+  var reporterConfig = config.junitReporter || {};
+  var pkgName = reporterConfig.suite || '';
+  var outputFile = helper.normalizeWinPath(path.resolve(config.basePath, reporterConfig.outputFile
+      || 'test-results.xml'));
 
   var xml;
   var suites;
@@ -102,8 +98,7 @@ var JUnitReporter = function(baseReporterDecorator, config, logger, helper, form
   };
 };
 
-JUnitReporter.$inject = ['baseReporterDecorator', 'config.junitReporter', 'logger', 'helper',
-    'formatError'];
+JUnitReporter.$inject = ['baseReporterDecorator', 'config', 'logger', 'helper', 'formatError'];
 
 // PUBLISH DI MODULE
 module.exports = {
