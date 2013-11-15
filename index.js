@@ -23,7 +23,7 @@ var JUnitReporter = function(baseReporterDecorator, config, logger, helper, form
     allMessages.push(msg);
   }];
 
-  this.onRunStart = function(browsers) {
+  this.onRunStart = function() {
     suites = Object.create(null);
     xml = builder.create('testsuites');
   };
