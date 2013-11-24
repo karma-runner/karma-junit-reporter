@@ -23,17 +23,24 @@ var JUnitReporter = function(baseReporterDecorator, config, logger, helper, form
     allMessages.push(msg);
   }];
 
-  this.onRunStart = function() {
-    suites = Object.create(null);
-    xml = builder.create('testsuites');
-  };
-
-  this.onBrowserStart = function(browser) {
+  var initliazeXmlForBrowser = function(browser) {
     var timestamp = (new Date()).toISOString().substr(0, 19);
     var suite = suites[browser.id] = xml.ele('testsuite', {
       name: browser.name, 'package': pkgName, timestamp: timestamp, id: 0, hostname: os.hostname()
     });
     suite.ele('properties').ele('property', {name: 'browser.fullName', value: browser.fullName});
+  };
+
+  this.onRunStart = function(browsers) {
+    suites = Object.create(null);
+    xml = builder.create('testsuites');
+
+    // TODO(vojta): remove once we don't care about Karma 0.10
+    browsers.forEach(initliazeXmlForBrowser);
+  };
+
+  this.onBrowserStart = function(browser) {
+    initliazeXmlForBrowser(browser);
   };
 
   this.onBrowserComplete = function(browser) {
