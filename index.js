@@ -13,11 +13,7 @@ var JUnitReporter = function(baseReporterDecorator, config, logger, helper, form
     throw new Error('You must set an output directory for JUnitReporter via the outputDir config property');
   }
 
-  var outputDir = helper.normalizeWinPath(path.resolve(config.basePath, reporterConfig.outputDir));
-  if (outputDir.substr(-1) != path.sep) {
-    outputDir += path.sep;
-  }
-
+  var outputDir = helper.normalizeWinPath(path.resolve(config.basePath, reporterConfig.outputDir)) + path.sep;
   var suites;
   var pendingFileWritings = 0;
   var fileWritingFinished = function() {};
