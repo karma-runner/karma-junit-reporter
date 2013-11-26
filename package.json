@@ -1,6 +1,6 @@
 {
   "name": "karma-junit-reporter",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A Karma plugin. Report results in junit xml format.",
   "main": "index.js",
   "scripts": {
