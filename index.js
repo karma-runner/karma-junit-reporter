@@ -45,6 +45,13 @@ var JUnitReporter = function(baseReporterDecorator, config, logger, helper, form
 
   this.onBrowserComplete = function(browser) {
     var suite = suites[browser.id];
+
+    if (!suite) {
+      // This browser did not signal `onBrowserStart`. That happens
+      // if the browser timed out duging the start phase.
+      return;
+    }
+
     var result = browser.lastResult;
 
     suite.att('tests', result.total);
