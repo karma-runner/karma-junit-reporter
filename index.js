@@ -48,7 +48,7 @@ var JUnitReporter = function(baseReporterDecorator, config, logger, helper, form
 
     if (!suite) {
       // This browser did not signal `onBrowserStart`. That happens
-      // if the browser timed out duging the start phase.
+      // if the browser timed out during the start phase.
       return;
     }
 
