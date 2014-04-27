@@ -44,7 +44,7 @@ var JUnitReporter = function(baseReporterDecorator, config, logger, helper, form
   };
 
   this.onBrowserComplete = function(browser) {
-    var suite = suites[browser.id];
+    var suite = suites && suites[browser.id];
 
     if (!suite) {
       // This browser did not signal `onBrowserStart`. That happens
@@ -65,6 +65,10 @@ var JUnitReporter = function(baseReporterDecorator, config, logger, helper, form
 
   this.onRunComplete = function() {
     var xmlToOutput = xml;
+
+    if (!xml) {
+      return fileWritingFinished();
+    }
 
     pendingFileWritings++;
     helper.mkdirIfNotExists(path.dirname(outputFile), function() {
