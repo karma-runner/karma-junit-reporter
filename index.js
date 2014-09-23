@@ -86,20 +86,28 @@ var JUnitReporter = function(baseReporterDecorator, config, logger, helper, form
   };
 
   this.specSuccess = this.specSkipped = this.specFailure = function(browser, result) {
-    var spec = suites[browser.id].ele('testcase', {
-      name: result.description, time: ((result.time || 0) / 1000),
-      classname: (pkgName ? pkgName + ' ' : '') + browser.name + '.' + result.suite.join(' ').replace(/\./g, '_')
-    });
-
     if (result.skipped) {
-      spec.ele('skipped');
-    }
-
+     var spec = suites[browser.id].ele('testcase', {
+     name: result.description, time: ((result.time || 0) / 1000),
+		 classname: (pkgName ? pkgName + ' ' : '') + browser.name + '.' + result.suite.join(' ').replace(/\./g, '_')
+		});
+     spec.ele('skipped');
+    }else{
     if (!result.success) {
-      result.log.forEach(function(err) {
-        spec.ele('failure', {type: ''}, formatError(err));
-      });
-    }
+     result.log.forEach(function(err) {
+     spec = suites[browser.id].ele('testcase', {
+     name: result.description, time: ((result.time || 0) / 1000),
+     classname: (pkgName ? pkgName + ' ' : '') + browser.name + '.' + result.suite.join(' ').replace(/\./g, '_')
+     });
+      spec.ele('failure', {message: 'Failure'}, formatError(err));
+     });
+    }else{
+     var spec = suites[browser.id].ele('testcase', {
+     name: result.description, time: ((result.time || 0) / 1000),
+    classname: (pkgName ? pkgName + ' ' : '') + browser.name + '.' + result.suite.join(' ').replace(/\./g, '_')
+    });
+	 }
+	}
   };
 
   // wait for writing all the xml files, before exiting
