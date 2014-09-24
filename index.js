@@ -8,6 +8,7 @@ var JUnitReporter = function(baseReporterDecorator, config, logger, helper, form
   var log = logger.create('reporter.junit');
   var reporterConfig = config.junitReporter || {};
   var pkgName = reporterConfig.suite || '';
+  var oldJunitFormatFlg = reporterConfig.oldJunitFormat || false;
   var outputFile = helper.normalizeWinPath(path.resolve(config.basePath, reporterConfig.outputFile
       || 'test-results.xml'));
 
@@ -86,7 +87,23 @@ var JUnitReporter = function(baseReporterDecorator, config, logger, helper, form
   };
 
   this.specSuccess = this.specSkipped = this.specFailure = function(browser, result) {
+    if(!oldJunitFormatFlg){
+    var spec = suites[browser.id].ele('testcase', {
+      name: result.description, time: ((result.time || 0) / 1000),
+      classname: (pkgName ? pkgName + ' ' : '') + browser.name + '.' + result.suite.join(' ').replace(/\./g, '_')
+    });
+
     if (result.skipped) {
+      spec.ele('skipped');
+    }
+
+    if (!result.success) {
+      result.log.forEach(function(err) {
+        spec.ele('failure', {type: ''}, formatError(err));
+      });
+    }
+	}else{
+	if (result.skipped) {
      var spec = suites[browser.id].ele('testcase', {
      name: result.description, time: ((result.time || 0) / 1000),
 		 classname: (pkgName ? pkgName + ' ' : '') + browser.name + '.' + result.suite.join(' ').replace(/\./g, '_')
@@ -107,6 +124,7 @@ var JUnitReporter = function(baseReporterDecorator, config, logger, helper, form
     classname: (pkgName ? pkgName + ' ' : '') + browser.name + '.' + result.suite.join(' ').replace(/\./g, '_')
     });
 	 }
+	}
 	}
   };
 
