@@ -95,24 +95,24 @@ var JUnitReporter = function(baseReporterDecorator, config, logger, helper, form
 	if(!sonarFormatFlg) {
 	 var spec = getSpec(browser, result);
 	 if (result.skipped) {
-      spec.ele('skipped');
-     }
-     if (!result.success) {
-      result.log.forEach(function(err) {
-        spec.ele('failure', {type: ''}, formatError(err));
-      });
-     }
-	}else {
+            spec.ele('skipped');
+         }
+         if (!result.success) {
+            result.log.forEach(function(err) {
+            spec.ele('failure', {type: ''}, formatError(err));
+          });
+         }
+        }else {
 	  if (result.skipped) {
 	   var spec = getSpec(browser, result);
 	   spec.ele('skipped');
-      }
-      if (!result.success) {
-       result.log.forEach(function(err) {
-        var spec = getSpec(browser, result);
-        spec.ele('failure', {message: 'Failure'}, formatError(err));
-       });
-      }
+           }
+           if (!result.success) {
+              result.log.forEach(function(err) {
+              var spec = getSpec(browser, result);
+              spec.ele('failure', {message: 'Failure'}, formatError(err));
+              });
+           }
 	}
   };
 
