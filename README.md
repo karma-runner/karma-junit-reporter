@@ -28,7 +28,7 @@ module.exports = function(config) {
 
     // the default configuration
     junitReporter: {
-      outputFile: 'test-results.xml',
+      outputDir: '', // results will be saved as $outputDir/$browserName.xml
       suite: ''
     }
   });
