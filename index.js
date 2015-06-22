@@ -91,7 +91,7 @@ var JUnitReporter = function(baseReporterDecorator, config, logger, helper, form
 
   this.specSuccess = this.specSkipped = this.specFailure = function(browser, result) {
     var spec = suites[browser.id].ele('testcase', {
-      name: result.description, time: ((result.time || 0) / 1000),
+      name: result.description, fullName: result.fullName, time: ((result.time || 0) / 1000),
       classname: (pkgName ? pkgName + ' ' : '') + browser.name + '.' + result.suite.join(' ').replace(/\./g, '_')
     });
 
