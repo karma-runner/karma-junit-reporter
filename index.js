@@ -59,6 +59,10 @@ var JUnitReporter = function(baseReporterDecorator, config, logger, helper, form
     suite.att('failures', result.failed);
     suite.att('time', (result.netTime || 0) / 1000);
 
+    if (result.disconnected) {
+      suite.ele('error').att('message', 'Browser disconnected');
+    }
+
     suite.ele('system-out').dat(allMessages.join() + '\n');
     suite.ele('system-err');
   };
