@@ -72,23 +72,30 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
 
     if (!suite) {
       // This browser did not signal `onBrowserStart`. That happens
-      // if the browser timed out during the start phase.
-      return
+      // if the browser timed out during the start phase or javascript
+      // exception has occured.
+      initliazeXmlForBrowser(browser)
+      if (browser.lastResult.error) {
+        suite = suites[browser.id]
+        suite.ele('error').dat(allMessages.join() + '\n')
+        allMessages = []
+      }
+    } else {
+      var result = browser.lastResult
+
+      suite.att('tests', result.total)
+      suite.att('errors', result.disconnected || result.error ? 1 : 0)
+      suite.att('failures', result.failed)
+      suite.att('time', (result.netTime || 0) / 1000)
+
+      if (result.disconnected) {
+        suite.ele('error').att('message', 'Browser disconnected')
+      }
+
+      suite.ele('system-out').dat(allMessages.join() + '\n')
+      allMessages = []
+      suite.ele('system-err')
     }
-
-    var result = browser.lastResult
-
-    suite.att('tests', result.total)
-    suite.att('errors', result.disconnected || result.error ? 1 : 0)
-    suite.att('failures', result.failed)
-    suite.att('time', (result.netTime || 0) / 1000)
-
-    if (result.disconnected) {
-      suite.ele('error').att('message', 'Browser disconnected')
-    }
-
-    suite.ele('system-out').dat(allMessages.join() + '\n')
-    suite.ele('system-err')
 
     writeXmlForBrowser(browser)
   }
