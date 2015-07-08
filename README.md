@@ -14,7 +14,7 @@ The easiest way is to keep `karma-junit-reporter` as a devDependency in your `pa
 {
   "devDependencies": {
     "karma": "~0.10",
-    "karma-junit-reporter": "~0.2"
+    "karma-junit-reporter": "~0.3"
   }
 }
 ```
