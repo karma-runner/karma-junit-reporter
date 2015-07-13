@@ -11,7 +11,8 @@ module.exports = function (grunt) {
         commitMessage: 'chore: release v%VERSION%',
         pushTo: 'upstream',
         commitFiles: [
-          'package.json'
+          'package.json',
+          'CHANGELOG.md'
         ]
       }
     },
@@ -31,6 +32,7 @@ module.exports = function (grunt) {
     grunt.task.run([
       'npm-contributors',
       'bump-only:' + (type || 'patch'),
+      'changelog',
       'bump-commit',
       'npm-publish'
     ])
