@@ -1,3 +1,12 @@
+<a name"0.3.1"></a>
+### 0.3.1 (2015-07-13)
+
+
+#### Bug Fixes
+
+* handle browser script failure and put the error to browser report ([d5b365ab](https://github.com/karma-runner/karma-junit-reporter/commit/d5b365ab))
+
+
 <a name"0.3.0"></a>
 ## 0.3.0 (2015-07-13)
 
