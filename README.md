@@ -33,8 +33,9 @@ module.exports = function(config) {
 
     // the default configuration
     junitReporter: {
-      outputDir: '', // results will be saved as $outputDir/$browserName.xml
-      suite: ''
+      outputDir: '',  // results will be saved as $outputDir/$browserName.xml
+      suite: '',
+      prefix: ''      // file prefix
     }
   });
 };
