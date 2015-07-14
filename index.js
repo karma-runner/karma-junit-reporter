@@ -13,6 +13,8 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
   }
 
   var outputDir = helper.normalizeWinPath(path.resolve(config.basePath, reporterConfig.outputDir)) + path.sep
+  var prefix = reporterConfig.prefix || ''
+
   var suites
   var pendingFileWritings = 0
   var fileWritingFinished = function () {}
@@ -37,7 +39,7 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
   }
 
   var writeXmlForBrowser = function (browser) {
-    var outputFile = outputDir + browser.name.replace(/ /g, '_') + '.xml'
+    var outputFile = outputDir + prefix + browser.name.replace(/ /g, '_') + '.xml'
     var xmlToOutput = suites[browser.id]
 
     pendingFileWritings++
