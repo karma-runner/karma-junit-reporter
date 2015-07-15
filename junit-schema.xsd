@@ -189,7 +189,12 @@ Permission to waive conditions of this license may be requested from Windy Road 
 		</xs:attribute>
 		<xs:attribute name="errors" type="xs:int" use="required">
 			<xs:annotation>
-				<xs:documentation xml:lang="en">The total number of tests in the suite that errorrd. An errored test is one that had an unanticipated problem. e.g., an unchecked throwable; or a problem with the implementation of the test.</xs:documentation>
+				<xs:documentation xml:lang="en">The total number of tests in the suite that errored. An errored test is one that had an unanticipated problem. e.g., an unchecked throwable; or a problem with the implementation of the test.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="skipped" type="xs:int">
+			<xs:annotation>
+				<xs:documentation xml:lang="en">The total number of tests in the suite that was skipped. A skipped test is one that was marked to be ignored and did not executed.</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
 		<xs:attribute name="time" type="xs:decimal" use="required">

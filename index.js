@@ -86,6 +86,7 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
       suite.att('tests', result.total)
       suite.att('errors', result.disconnected || result.error ? 1 : 0)
       suite.att('failures', result.failed)
+      suite.att('skipped', result.skipped)
       suite.att('time', (result.netTime || 0) / 1000)
 
       if (result.disconnected) {
