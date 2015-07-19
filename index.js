@@ -7,6 +7,7 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
   var log = logger.create('reporter.junit')
   var reporterConfig = config.junitReporter || {}
   var pkgName = reporterConfig.suite || ''
+  var outputFileName = reporterConfig.outputFile
 
   if (!reporterConfig.outputDir) {
     throw new Error('You must set an output directory for JUnitReporter via the outputDir config property')
@@ -37,8 +38,14 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
   }
 
   var writeXmlForBrowser = function (browser) {
-    var outputFile = outputDir + browser.name.replace(/ /g, '_') + '.xml'
+    var outputFile = path.join(outputDir, browser.name.replace(/ /g, '_'))
     var xmlToOutput = suites[browser.id]
+
+    if (outputFileName) {
+      outputFile = path.join(outputFile, outputFileName)
+    } else {
+      outputFile += '.xml'
+    }
 
     pendingFileWritings++
     helper.mkdirIfNotExists(outputDir, function () {
