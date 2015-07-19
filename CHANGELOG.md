@@ -1,3 +1,12 @@
+<a name"0.3.2"></a>
+### 0.3.2 (2015-07-19)
+
+
+#### Features
+
+* Allow user to specify filename ([71e0e432](https://github.com/karma-runner/karma-junit-reporter/commit/71e0e432))
+
+
 <a name"0.3.1"></a>
 ### 0.3.1 (2015-07-13)
 
