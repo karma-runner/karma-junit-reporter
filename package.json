@@ -4,16 +4,16 @@
   "description": "A Karma plugin. Report results in junit xml format.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "grunt"
   },
   "repository": {
     "type": "git",
     "url": "git://github.com/karma-runner/karma-junit-reporter.git"
   },
   "keywords": [
+    "junit",
     "karma-plugin",
-    "karma-reporter",
-    "junit"
+    "karma-reporter"
   ],
   "author": "Vojta Jina <vojta.jina@gmail.com>",
   "dependencies": {
