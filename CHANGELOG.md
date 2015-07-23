@@ -1,3 +1,12 @@
+<a name"0.3.3"></a>
+### 0.3.3 (2015-07-23)
+
+
+#### Bug Fixes
+
+* create browser directory if not exist ([fe14a8d8](https://github.com/karma-runner/karma-junit-reporter/commit/fe14a8d8))
+
+
 <a name"0.3.2"></a>
 ### 0.3.2 (2015-07-19)
 
