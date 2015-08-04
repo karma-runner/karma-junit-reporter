@@ -7,7 +7,6 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
   var log = logger.create('reporter.junit')
   var reporterConfig = config.junitReporter || {}
   var pkgName = reporterConfig.suite || ''
-  var outputFileName = reporterConfig.outputFile
 
   if (!reporterConfig.outputDir) {
     throw new Error('You must set an output directory for JUnitReporter via the outputDir config property')
@@ -29,25 +28,17 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
     var timestamp = (new Date()).toISOString().substr(0, 19)
     var suite = suites[browser.id] = builder.create('testsuite')
     suite.att('name', browser.name)
-      .att('package', pkgName)
-      .att('timestamp', timestamp)
-      .att('id', 0)
-      .att('hostname', os.hostname())
+         .att('package', pkgName)
+         .att('timestamp', timestamp)
+         .att('id', 0)
+         .att('hostname', os.hostname())
     suite.ele('properties')
-      .ele('property', {name: 'browser.fullName', value: browser.fullName})
+         .ele('property', {name: 'browser.fullName', value: browser.fullName})
   }
 
   var writeXmlForBrowser = function (browser) {
-    var outputBrowserPath = path.join(outputDir, browser.name.replace(/ /g, '_'))
+    var outputFile = outputDir + 'TESTS-' + browser.name.replace(/ /g, '_') + '.xml'
     var xmlToOutput = suites[browser.id]
-    var outputFile
-
-    if (outputFileName) {
-      outputDir = outputBrowserPath
-      outputFile = path.join(outputBrowserPath, outputFileName)
-    } else {
-      outputFile = outputBrowserPath + '.xml'
-    }
 
     pendingFileWritings++
     helper.mkdirIfNotExists(outputDir, function () {
@@ -78,33 +69,15 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
 
   this.onBrowserComplete = function (browser) {
     var suite = suites[browser.id]
+    var result = browser.lastResult
 
-    if (!suite) {
-      // This browser did not signal `onBrowserStart`. That happens
-      // if the browser timed out during the start phase or javascript
-      // exception has occured.
-      initliazeXmlForBrowser(browser)
-      if (browser.lastResult.error) {
-        suite = suites[browser.id]
-        suite.ele('error').dat(allMessages.join() + '\n')
-        allMessages = []
-      }
-    } else {
-      var result = browser.lastResult
+    suite.att('tests', result.total)
+    suite.att('errors', result.disconnected || result.error ? 1 : 0)
+    suite.att('failures', result.failed)
+    suite.att('time', (result.netTime || 0) / 1000)
 
-      suite.att('tests', result.total)
-      suite.att('errors', result.disconnected || result.error ? 1 : 0)
-      suite.att('failures', result.failed)
-      suite.att('time', (result.netTime || 0) / 1000)
-
-      if (result.disconnected) {
-        suite.ele('error').att('message', 'Browser disconnected')
-      }
-
-      suite.ele('system-out').dat(allMessages.join() + '\n')
-      allMessages = []
-      suite.ele('system-err')
-    }
+    suite.ele('system-out').dat(allMessages.join() + '\n')
+    suite.ele('system-err')
 
     writeXmlForBrowser(browser)
   }
@@ -117,7 +90,7 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
   this.specSuccess = this.specSkipped = this.specFailure = function (browser, result) {
     var spec = suites[browser.id].ele('testcase', {
       name: result.description, time: ((result.time || 0) / 1000),
-      classname: (pkgName ? pkgName + ' ' : '') + result.suite.join(' ').replace(/\./g, '_')
+      classname: browser.name.replace(/ /g, '_').replace(/\./g, '_') + '.' + (pkgName ? pkgName + '.' : '') + result.suite[0]
     })
 
     if (result.skipped) {
