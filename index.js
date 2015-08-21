@@ -7,16 +7,18 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
   var log = logger.create('reporter.junit')
   var reporterConfig = config.junitReporter || {}
   var pkgName = reporterConfig.suite || ''
+  var outputDir = reporterConfig.outputDir
 
-  if (!reporterConfig.outputDir) {
-    throw new Error('You must set an output directory for JUnitReporter via the outputDir config property')
-  }
-
-  var outputDir = helper.normalizeWinPath(path.resolve(config.basePath, reporterConfig.outputDir)) + path.sep
   var suites
   var pendingFileWritings = 0
   var fileWritingFinished = function () {}
   var allMessages = []
+
+  if (outputDir == null) {
+    outputDir = '.'
+  }
+
+  outputDir = helper.normalizeWinPath(path.resolve(config.basePath, outputDir)) + path.sep
 
   baseReporterDecorator(this)
 
