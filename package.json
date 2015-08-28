@@ -38,19 +38,24 @@
     "load-grunt-tasks": "^3.2.0"
   },
   "contributors": [
-    "dignifiedquire <dignifiedquire@gmail.com>",
     "Friedel Ziegelmayer <dignifiedquire@gmail.com>",
-    "Friedel Ziegelmayer <friedel.ziegelmayer@gmail.com>",
+    "dignifiedquire <dignifiedquire@gmail.com>",
     "Simen Bekkhus <sbekkhus91@gmail.com>",
+    "Friedel Ziegelmayer <friedel.ziegelmayer@gmail.com>",
     "Janek Lasocki-Biczysko <iamjanek@gmail.com>",
-    "Trey Hyde <thyde@centraldesktop.com>",
-    "Vladimir Alaev <scff@yandex-team.ru>",
-    "Brian Donovan <me@brian-donovan.com>",
-    "sylvain-hamel <sylvainhamel0@gmail.com>",
-    "Brian Meneses <brian.meneses@gmail.com>",
-    "David Pärsson <david@parsson.se>",
+    "John Haugeland <stonecypher@gmail.com>",
     "Kira Cheung <killercentury@gmail.com>",
     "Maksim Ryzhikov <rv.maksim@gmail.com>",
-    "Sylvain Hamel <sylvainhamel0@gmail.com>"
+    "Sylvain Hamel <sylvainhamel0@gmail.com>",
+    "Trey Hyde <thyde@centraldesktop.com>",
+    "Vladimir Alaev <scff@yandex-team.ru>",
+    "mon.asuncion <mon@englishcentral.com>",
+    "Alex Alvarez <dominalexican@gmail.com>",
+    "sylvain-hamel <sylvainhamel0@gmail.com>",
+    "Brian Donovan <me@brian-donovan.com>",
+    "Brian Meneses <brian.meneses@gmail.com>",
+    "Cesar Andreu <cesarandreu@gmail.com>",
+    "David Pärsson <david@parsson.se>",
+    "Janek Lasocki-Biczysko <j.lasocki-biczysko@intrallect.com>"
   ]
 }
