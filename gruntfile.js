@@ -6,14 +6,38 @@ module.exports = function (grunt) {
         commitMessage: 'chore: update contributors'
       }
     },
+    conventionalChangelog: {
+      release: {
+        options: {
+          changelogOpts: {
+            preset: 'angular'
+          }
+        },
+        src: 'CHANGELOG.md'
+      }
+    },
+    conventionalGithubReleaser: {
+      release: {
+        options: {
+          auth: {
+            type: 'oauth',
+            token: process.env.GH_TOKEN
+          },
+          changelogOpts: {
+            preset: 'angular',
+            releaseCount: 0
+          }
+        }
+      }
+    },
     bump: {
       options: {
-        commitMessage: 'chore: release v%VERSION%',
         pushTo: 'upstream',
         commitFiles: [
           'package.json',
           'CHANGELOG.md'
-        ]
+        ],
+        commitMessage: 'chore: release v%VERSION%'
       }
     },
     eslint: {
@@ -32,8 +56,9 @@ module.exports = function (grunt) {
     grunt.task.run([
       'npm-contributors',
       'bump-only:' + (type || 'patch'),
-      'changelog',
+      'conventionalChangelog',
       'bump-commit',
+      'conventionalGithubReleaser',
       'npm-publish'
     ])
   })

@@ -20,19 +20,20 @@
   ],
   "author": "Vojta Jina <vojta.jina@gmail.com>",
   "dependencies": {
-    "xmlbuilder": "0.4.2"
+    "xmlbuilder": "2.6.4"
   },
   "peerDependencies": {
     "karma": ">=0.9"
   },
   "license": "MIT",
   "devDependencies": {
-    "eslint": "^0.24.0",
-    "eslint-config-standard": "^3.4.1",
+    "eslint": "^1.2.1",
+    "eslint-config-standard": "^4.1.0",
     "grunt": "^0.4.1",
-    "grunt-bump": "^0.3.1",
-    "grunt-conventional-changelog": "^1.2.2",
-    "grunt-eslint": "^16.0.0",
+    "grunt-bump": "^0.5.0",
+    "grunt-conventional-changelog": "^4.1.0",
+    "grunt-conventional-github-releaser": "^0.4.0",
+    "grunt-eslint": "^17.1.0",
     "grunt-npm": "^0.0.2",
     "load-grunt-tasks": "^3.2.0"
   },
