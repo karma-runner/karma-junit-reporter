@@ -39,7 +39,7 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
   }
 
   var writeXmlForBrowser = function (browser) {
-    var outputFile = outputDir + 'TESTS-' + browser.name.replace(/ /g, '_') + '.xml'
+    var outputFile = outputDir + 'TESTS-' + browser.name.replace(/ |\//g, '_') + '.xml'
     var xmlToOutput = suites[browser.id]
     if (!xmlToOutput) {
       return // don't die if browser didn't start
