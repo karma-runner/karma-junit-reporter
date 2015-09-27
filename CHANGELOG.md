@@ -1,3 +1,14 @@
+<a name="0.3.5"></a>
+## [0.3.5](https://github.com/karma-runner/karma-junit-reporter/compare/v0.3.4...v0.3.5) (2015-09-27)
+
+
+### Bug Fixes
+
+* Add back `outputFile` config ([b4583b5](https://github.com/karma-runner/karma-junit-reporter/commit/b4583b5)), closes [#58](https://github.com/karma-runner/karma-junit-reporter/issues/58)
+* Update dependencies ([a1fe8fe](https://github.com/karma-runner/karma-junit-reporter/commit/a1fe8fe))
+
+
+
 <a name="0.3.4"></a>
 ## [0.3.4](https://github.com/karma-runner/karma-junit-reporter/compare/v0.3.3...v0.3.4) (2015-08-28)
 
