@@ -23,9 +23,11 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
 
   baseReporterDecorator(this)
 
-  this.adapters = [function (msg) {
-    allMessages.push(msg)
-  }]
+  this.adapters = [
+    function (msg) {
+      allMessages.push(msg)
+    }
+  ]
 
   var initliazeXmlForBrowser = function (browser) {
     var timestamp = (new Date()).toISOString().substr(0, 19)
