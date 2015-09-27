@@ -8,6 +8,7 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
   var reporterConfig = config.junitReporter || {}
   var pkgName = reporterConfig.suite || ''
   var outputDir = reporterConfig.outputDir
+  var outputFile = reporterConfig.outputFile
 
   var suites
   var pendingFileWritings = 0
@@ -30,16 +31,24 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
     var timestamp = (new Date()).toISOString().substr(0, 19)
     var suite = suites[browser.id] = builder.create('testsuite')
     suite.att('name', browser.name)
-         .att('package', pkgName)
-         .att('timestamp', timestamp)
-         .att('id', 0)
-         .att('hostname', os.hostname())
+      .att('package', pkgName)
+      .att('timestamp', timestamp)
+      .att('id', 0)
+      .att('hostname', os.hostname())
+
     suite.ele('properties')
-         .ele('property', {name: 'browser.fullName', value: browser.fullName})
+      .ele('property', {name: 'browser.fullName', value: browser.fullName})
   }
 
   var writeXmlForBrowser = function (browser) {
-    var outputFile = outputDir + 'TESTS-' + browser.name.replace(/ /g, '_') + '.xml'
+    var safeBrowserName = browser.name.replace(/ /g, '_')
+    if (outputFile != null) {
+      outputDir = path.join(outputDir, safeBrowserName)
+      outputFile = path.join(outputDir, outputFile)
+    } else {
+      outputFile = path.join(outputDir, 'TESTS-' + safeBrowserName + '.xml')
+    }
+
     var xmlToOutput = suites[browser.id]
     if (!xmlToOutput) {
       return // don't die if browser didn't start
