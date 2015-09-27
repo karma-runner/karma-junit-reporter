@@ -9,22 +9,16 @@
 
 ## Installation
 
-The easiest way is to keep `karma-junit-reporter` as a devDependency in your `package.json`.
-```json
-{
-  "devDependencies": {
-    "karma": "~0.10",
-    "karma-junit-reporter": "~0.3"
-  }
-}
-```
+The easiest way is to keep `karma-junit-reporter` as a devDependency in your `package.json`. Just run
 
-You can simple do it by:
 ```bash
 npm install karma-junit-reporter --save-dev
 ```
 
+to let npm automatically add it there.
+
 ## Configuration
+
 ```js
 // karma.conf.js
 module.exports = function(config) {
