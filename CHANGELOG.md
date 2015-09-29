@@ -1,3 +1,13 @@
+<a name="0.3.6"></a>
+## [0.3.6](https://github.com/karma-runner/karma-junit-reporter/compare/v0.3.5...v0.3.6) (2015-09-29)
+
+
+### Bug Fixes
+
+* Bug in building of paths ([1c36509](https://github.com/karma-runner/karma-junit-reporter/commit/1c36509)), closes [#65](https://github.com/karma-runner/karma-junit-reporter/issues/65)
+
+
+
 <a name="0.3.5"></a>
 ## [0.3.5](https://github.com/karma-runner/karma-junit-reporter/compare/v0.3.4...v0.3.5) (2015-09-27)
 
