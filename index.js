@@ -44,11 +44,12 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
 
   var writeXmlForBrowser = function (browser) {
     var safeBrowserName = browser.name.replace(/ /g, '_')
+    var newOutputFile;
     if (outputFile != null) {
-      outputDir = path.join(outputDir, safeBrowserName)
-      outputFile = path.join(outputDir, outputFile)
+      var dir = path.join(outputDir, safeBrowserName)
+      newOutputFile = path.join(dir, outputFile)
     } else {
-      outputFile = path.join(outputDir, 'TESTS-' + safeBrowserName + '.xml')
+      newOutputFile = path.join(outputDir, 'TESTS-' + safeBrowserName + '.xml')
     }
 
     var xmlToOutput = suites[browser.id]
@@ -58,11 +59,11 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
 
     pendingFileWritings++
     helper.mkdirIfNotExists(outputDir, function () {
-      fs.writeFile(outputFile, xmlToOutput.end({pretty: true}), function (err) {
+      fs.writeFile(newOutputFile, xmlToOutput.end({pretty: true}), function (err) {
         if (err) {
           log.warn('Cannot write JUnit xml\n\t' + err.message)
         } else {
-          log.debug('JUnit results written to "%s".', outputFile)
+          log.debug('JUnit results written to "%s".', newOutputFile)
         }
 
         if (!--pendingFileWritings) {
