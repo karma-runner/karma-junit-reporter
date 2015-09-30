@@ -58,7 +58,7 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
     }
 
     pendingFileWritings++
-    helper.mkdirIfNotExists(outputDir, function () {
+    helper.mkdirIfNotExists(path.dirname(newOutputFile), function () {
       fs.writeFile(newOutputFile, xmlToOutput.end({pretty: true}), function (err) {
         if (err) {
           log.warn('Cannot write JUnit xml\n\t' + err.message)
