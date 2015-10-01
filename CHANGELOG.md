@@ -1,3 +1,13 @@
+<a name="0.3.7"></a>
+## [0.3.7](https://github.com/karma-runner/karma-junit-reporter/compare/v0.3.6...v0.3.7) (2015-10-01)
+
+
+### Bug Fixes
+
+* **reporter:** bug creating directory when outputFile specified (#67) ([2205f47](https://github.com/karma-runner/karma-junit-reporter/commit/2205f47))
+
+
+
 <a name="0.3.6"></a>
 ## [0.3.6](https://github.com/karma-runner/karma-junit-reporter/compare/v0.3.5...v0.3.6) (2015-09-29)
 
