@@ -9,6 +9,7 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
   var pkgName = reporterConfig.suite || ''
   var outputDir = reporterConfig.outputDir
   var outputFile = reporterConfig.outputFile
+  var useBrowserName = reporterConfig.useBrowserName
 
   var suites
   var pendingFileWritings = 0
@@ -20,6 +21,10 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
   }
 
   outputDir = helper.normalizeWinPath(path.resolve(config.basePath, outputDir)) + path.sep
+
+  if (typeof useBrowserName === 'undefined') {
+    useBrowserName = true
+  }
 
   baseReporterDecorator(this)
 
@@ -46,10 +51,13 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
     var safeBrowserName = browser.name.replace(/ /g, '_')
     var newOutputFile
     if (outputFile != null) {
-      var dir = path.join(outputDir, safeBrowserName)
+      var dir = useBrowserName ? path.join(outputDir, safeBrowserName)
+                               : outputDir
       newOutputFile = path.join(dir, outputFile)
-    } else {
+    } else if (useBrowserName) {
       newOutputFile = path.join(outputDir, 'TESTS-' + safeBrowserName + '.xml')
+    } else {
+      newOutputFile = path.join(outputDir, 'TESTS.xml')
     }
 
     var xmlToOutput = suites[browser.id]
@@ -71,6 +79,12 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
         }
       })
     })
+  }
+
+  var getClassName = function (browser, result) {
+    var browserName = browser.name.replace(/ /g, '_').replace(/\./g, '_') + '.'
+
+    return (useBrowserName ? browserName : '') + (pkgName ? pkgName + '.' : '') + result.suite[0]
   }
 
   this.onRunStart = function (browsers) {
@@ -110,7 +124,7 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
   this.specSuccess = this.specSkipped = this.specFailure = function (browser, result) {
     var spec = suites[browser.id].ele('testcase', {
       name: result.description, time: ((result.time || 0) / 1000),
-      classname: browser.name.replace(/ /g, '_').replace(/\./g, '_') + '.' + (pkgName ? pkgName + '.' : '') + result.suite[0]
+      classname: getClassName(browser, result)
     })
 
     if (result.skipped) {
