@@ -1,3 +1,13 @@
+<a name="0.3.8"></a>
+## [0.3.8](https://github.com/karma-runner/karma-junit-reporter/compare/v0.3.7...v0.3.8) (2015-10-20)
+
+
+### Features
+
+* **reporter:** add useBrowserName parameter ([2327234](https://github.com/karma-runner/karma-junit-reporter/commit/2327234))
+
+
+
 <a name="0.3.7"></a>
 ## [0.3.7](https://github.com/karma-runner/karma-junit-reporter/compare/v0.3.6...v0.3.7) (2015-10-01)
 
