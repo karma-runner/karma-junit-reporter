@@ -82,10 +82,19 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
   }
 
   var getClassName = function (browser, result) {
-    var browserName = browser.name.replace(/ /g, '_').replace(/\./g, '_') + '.'
-    var namesNested = '' 
-    if (result.suite && result.suite.length > 0) { namesNested = result.suite.join(' ') }
-    return (useBrowserName ? browserName : '') + (pkgName ? pkgName + '.' : '') + namesNested 
+    var name='' 
+    if (useBrowserName) {
+      name += browser.name
+        .replace (/ /g, '_')
+        .replace (/\./g, '_') + '.'
+    }
+    if (pkgName) {
+      name += '.'
+    }
+    if (result.suite && result.suite.length > 0) {
+      name += result.suite.join(' ')
+    }
+    return name
   }
 
   this.onRunStart = function (browsers) {
