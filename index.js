@@ -33,7 +33,7 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
       allMessages.push(msg)
     }
   ]
- 
+
   var initializeXmlForBrowser = function (browser) {
     var timestamp = (new Date()).toISOString().substr(0, 19)
     var suite = suites[browser.id] = builder.create('testsuite')
