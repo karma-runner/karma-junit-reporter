@@ -33,8 +33,8 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
       allMessages.push(msg)
     }
   ]
-
-  var initliazeXmlForBrowser = function (browser) {
+ 
+  var initializeXmlForBrowser = function (browser) {
     var timestamp = (new Date()).toISOString().substr(0, 19)
     var suite = suites[browser.id] = builder.create('testsuite')
     suite.att('name', browser.name)
@@ -101,11 +101,11 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
     suites = Object.create(null)
 
     // TODO(vojta): remove once we don't care about Karma 0.10
-    browsers.forEach(initliazeXmlForBrowser)
+    browsers.forEach(initializeXmlForBrowser)
   }
 
   this.onBrowserStart = function (browser) {
-    initliazeXmlForBrowser(browser)
+    initializeXmlForBrowser(browser)
   }
 
   this.onBrowserComplete = function (browser) {
