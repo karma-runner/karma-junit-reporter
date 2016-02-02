@@ -10,6 +10,8 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
   var outputDir = reporterConfig.outputDir
   var outputFile = reporterConfig.outputFile
   var useBrowserName = reporterConfig.useBrowserName
+  var nameFormatter = reporterConfig.nameFormatter
+  var classNameFormatter = reporterConfig.classNameFormatter
 
   var suites
   var pendingFileWritings = 0
@@ -123,8 +125,9 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
 
   this.specSuccess = this.specSkipped = this.specFailure = function (browser, result) {
     var spec = suites[browser.id].ele('testcase', {
-      name: result.description, time: ((result.time || 0) / 1000),
-      classname: getClassName(browser, result)
+      name: typeof nameFormatter === 'function' ? nameFormatter(browser, result) : result.description,
+      time: ((result.time || 0) / 1000),
+      classname: (typeof classNameFormatter === 'function' ? classNameFormatter : getClassName)(browser, result)
     })
 
     if (result.skipped) {
