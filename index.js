@@ -12,6 +12,7 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
   var useBrowserName = reporterConfig.useBrowserName
   var nameFormatter = reporterConfig.nameFormatter
   var classNameFormatter = reporterConfig.classNameFormatter
+  var properties = reporterConfig.properties
 
   var suites
   var pendingFileWritings = 0
@@ -45,8 +46,15 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
       .att('id', 0)
       .att('hostname', os.hostname())
 
-    suite.ele('properties')
-      .ele('property', {name: 'browser.fullName', value: browser.fullName})
+    var propertiesElement = suite.ele('properties')
+    propertiesElement.ele('property', {name: 'browser.fullName', value: browser.fullName})
+
+    // add additional properties passed in through the config
+    for (var property in properties) {
+      if (properties.hasOwnProperty(property)) {
+        propertiesElement.ele('property', {name: property, value: properties[property]})
+      }
+    }
   }
 
   var writeXmlForBrowser = function (browser) {
