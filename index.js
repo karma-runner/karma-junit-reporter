@@ -2,6 +2,7 @@ var os = require('os')
 var path = require('path')
 var fs = require('fs')
 var builder = require('xmlbuilder')
+var sanitizeFilename = require('sanitize-filename')
 
 var JUnitReporter = function (baseReporterDecorator, config, logger, helper, formatError) {
   var log = logger.create('reporter.junit')
@@ -50,7 +51,7 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
   }
 
   var writeXmlForBrowser = function (browser) {
-    var safeBrowserName = browser.name.replace(/ /g, '_')
+    var safeBrowserName = sanitizeFilename(browser.name, { replacement: '_' }).replace(/ /g, '_')
     var newOutputFile
     if (outputFile != null) {
       var dir = useBrowserName ? path.join(outputDir, safeBrowserName)
