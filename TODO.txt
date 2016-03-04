@@ -1,0 +1,31 @@
+The unofficial to-do for karma-junit-reporter
+=============================================
+
+Planned milestones :
+
+20.3.2016	Continuous testing ready for karma-junit-reporter
+                 - adding tests to this project
+                 - make them run the standard Travis way: in npm's package.json 'scripts' 
+                   section, add the "test" command                
+
+Also, check whether the PR coming from this fork (branch) fixes these issues: 
+1. https://github.com/karma-runner/karma-junit-reporter/issues/81
+   - needs sanity check of one variable, in a manner that might have to
+     take into account the index is not numerable?
+     - basically it's either 
+        1.    if (x) ...
+        2. or if (x && (typeof x[theIndex] !== undefined)) ... 
+
+Specifics
+=========
+
+- in Travis
+  - add a simple test spec, for my code of kjur, to make Travis fail first
+    - this works as a kind of POC: "I got the test technically running!"
+  - add the real tests case (1) to the chain of tests to be done
+    - now a little bit of think-work would be nice. Does the test go for
+      a) just checking the getClassName() 
+      b) add some intelligence and conform to the ways this reporter is actually used?
+
+- make sure the ./test folder is committed
+- get filestuff right within the ./test 
