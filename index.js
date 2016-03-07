@@ -2,6 +2,12 @@ var os = require('os')
 var path = require('path')
 var fs = require('fs')
 var builder = require('xmlbuilder')
+var pathIsAbsolute = require('path-is-absolute')
+
+// concatenate test suite(s) and test description by default
+function defaultNameFormatter (browser, result) {
+  return result.suite.join(' ') + ' ' + result.description
+}
 
 var JUnitReporter = function (baseReporterDecorator, config, logger, helper, formatError) {
   var log = logger.create('reporter.junit')
@@ -10,7 +16,7 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
   var outputDir = reporterConfig.outputDir
   var outputFile = reporterConfig.outputFile
   var useBrowserName = reporterConfig.useBrowserName
-  var nameFormatter = reporterConfig.nameFormatter
+  var nameFormatter = reporterConfig.nameFormatter || defaultNameFormatter
   var classNameFormatter = reporterConfig.classNameFormatter
 
   var suites
@@ -52,7 +58,7 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
   var writeXmlForBrowser = function (browser) {
     var safeBrowserName = browser.name.replace(/ /g, '_')
     var newOutputFile
-    if (path.isAbsolute(outputFile)) {
+    if (pathIsAbsolute(outputFile)) {
       newOutputFile = outputFile
     } else if (outputFile != null) {
       var dir = useBrowserName ? path.join(outputDir, safeBrowserName)
@@ -127,7 +133,7 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
 
   this.specSuccess = this.specSkipped = this.specFailure = function (browser, result) {
     var spec = suites[browser.id].ele('testcase', {
-      name: typeof nameFormatter === 'function' ? nameFormatter(browser, result) : result.description,
+      name: nameFormatter(browser, result),
       time: ((result.time || 0) / 1000),
       classname: (typeof classNameFormatter === 'function' ? classNameFormatter : getClassName)(browser, result)
     })
