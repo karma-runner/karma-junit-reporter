@@ -1,3 +1,18 @@
+<a name="0.4.0"></a>
+# [0.4.0](https://github.com/karma-runner/karma-junit-reporter/compare/v0.3.8...v0.4.0) (2016-03-10)
+
+
+### Bug Fixes
+
+* Handle absolute outputFile paths in Junit Reporter ([d5dc808](https://github.com/karma-runner/karma-junit-reporter/commit/d5dc808)), closes [#83](https://github.com/karma-runner/karma-junit-reporter/issues/83)
+* test name to contain parent suite(s) names ([8e6e202](https://github.com/karma-runner/karma-junit-reporter/commit/8e6e202)), closes [#62](https://github.com/karma-runner/karma-junit-reporter/issues/62)
+
+### Features
+
+* add name and classname formatters ([3f43c51](https://github.com/karma-runner/karma-junit-reporter/commit/3f43c51)), closes [#75](https://github.com/karma-runner/karma-junit-reporter/issues/75)
+
+
+
 <a name="0.3.8"></a>
 ## [0.3.8](https://github.com/karma-runner/karma-junit-reporter/compare/v0.3.7...v0.3.8) (2015-10-20)
 
