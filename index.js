@@ -58,7 +58,7 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
   var writeXmlForBrowser = function (browser) {
     var safeBrowserName = browser.name.replace(/ /g, '_')
     var newOutputFile
-    if (pathIsAbsolute(outputFile)) {
+    if (outputFile && pathIsAbsolute(outputFile)) {
       newOutputFile = outputFile
     } else if (outputFile != null) {
       var dir = useBrowserName ? path.join(outputDir, safeBrowserName)
