@@ -1,3 +1,13 @@
+<a name="0.4.1"></a>
+## [0.4.1](https://github.com/karma-runner/karma-junit-reporter/compare/v0.4.0...v0.4.1) (2016-03-21)
+
+
+### Bug Fixes
+
+* check if outputFile is set before checking for absolute outputFile ([c8887ac](https://github.com/karma-runner/karma-junit-reporter/commit/c8887ac)), closes [#87](https://github.com/karma-runner/karma-junit-reporter/issues/87)
+
+
+
 <a name="0.4.0"></a>
 # [0.4.0](https://github.com/karma-runner/karma-junit-reporter/compare/v0.3.8...v0.4.0) (2016-03-10)
 
