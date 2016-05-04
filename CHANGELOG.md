@@ -1,5 +1,5 @@
-<a name="2.0.0"></a>
-# [2.0.0](https://github.com/karma-runner/karma-junit-reporter/compare/v0.4.2...v2.0.0) (2016-05-03)
+<a name="1.0.0"></a>
+# [1.0.0](https://github.com/karma-runner/karma-junit-reporter/compare/v0.4.2...v1.0.0) (2016-05-03)
 
 
 
