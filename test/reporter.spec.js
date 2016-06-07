@@ -80,4 +80,28 @@ describe('JUnit reporter', function () {
     var writtenXml = fakeFs.writeFile.firstCall.args[1]
     expect(writtenXml).to.have.string('testcase name="Sender using it get request should not fail"')
   })
+
+  it('should safely handle missing suite browser entries when specSuccess fires', function () {
+    reporter.onRunStart([])
+
+    // don't try to call null.ele()
+    expect(reporter.specSuccess.bind(reporter, {id: 1}, {})).to.not.throw(TypeError)
+  })
+
+  it('should safely handle invalid test result objects when onBrowserComplete fires', function () {
+    var badBrowserResult = {
+      id: 'Android_4_1_2',
+      name: 'Android',
+      fullName: 'Android 4.1.2',
+      lastResult: {
+        error: true,
+        netTime: 0
+      }
+    }
+
+    reporter.onRunStart([ badBrowserResult ])
+
+    // never pass a null value to XMLAttribute via xmlbuilder attr()
+    expect(reporter.onBrowserComplete.bind(reporter, badBrowserResult)).not.to.throw(Error)
+  })
 })
