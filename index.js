@@ -123,9 +123,9 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
       return // don't die if browser didn't start
     }
 
-    suite.att('tests', result.total)
+    suite.att('tests', result.total ? result.total : 0)
     suite.att('errors', result.disconnected || result.error ? 1 : 0)
-    suite.att('failures', result.failed)
+    suite.att('failures', result.failed ? result.failed : 0)
     suite.att('time', (result.netTime || 0) / 1000)
 
     suite.ele('system-out').dat(allMessages.join() + '\n')
@@ -140,7 +140,13 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
   }
 
   this.specSuccess = this.specSkipped = this.specFailure = function (browser, result) {
-    var spec = suites[browser.id].ele('testcase', {
+    var testsuite = suites[browser.id]
+
+    if (!testsuite) {
+      return
+    }
+
+    var spec = testsuite.ele('testcase', {
       name: nameFormatter(browser, result),
       time: ((result.time || 0) / 1000),
       classname: (typeof classNameFormatter === 'function' ? classNameFormatter : getClassName)(browser, result)
