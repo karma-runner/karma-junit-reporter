@@ -50,19 +50,20 @@
   "contributors": [
     "Vojta Jina <vojta.jina@gmail.com>",
     "Friedel Ziegelmayer <dignifiedquire@gmail.com>",
-    "Friedel Ziegelmayer <friedel.ziegelmayer@gmail.com>",
+    "Mark Ethan Trostler <mark@zzo.com>",
     "Simen Bekkhus <sbekkhus91@gmail.com>",
+    "Friedel Ziegelmayer <friedel.ziegelmayer@gmail.com>",
     "Janek Lasocki-Biczysko <iamjanek@gmail.com>",
     "Craig Vermeer <craig@vermeers.net>",
-    "Janek Lasocki-Biczysko <j.lasocki-biczysko@intrallect.com>",
     "John Haugeland <stonecypher@gmail.com>",
     "Kira Cheung <killercentury@gmail.com>",
+    "Larry Myers <larry@larrymyers.com>",
     "Maksim Ryzhikov <rv.maksim@gmail.com>",
-    "Mark Ethan Trostler <mark@zzo.com>",
     "Martin Leonhartsberger <mschrott@splunk.com>",
     "Matthias Oßwald <matz3@users.noreply.github.com>",
     "Mike Ng <mike.ng@optimizely.com>",
     "Nikita Shirin <shirin.nikita@gmail.com>",
+    "Paweł Gesek <pgesek@soldevelo.com>",
     "Phillip Johnsen <johphi@gmail.com>",
     "Rob Richardson <robrich@robrich.org>",
     "Sylvain Hamel <sylvainhamel0@gmail.com>",
@@ -77,6 +78,7 @@
     "Brian Meneses <brian.meneses@gmail.com>",
     "Cesar Andreu <cesarandreu@gmail.com>",
     "David Pärsson <david@parsson.se>",
-    "Derek Schaller <dschaller@lyft.com>"
+    "Derek Schaller <dschaller@lyft.com>",
+    "Janek Lasocki-Biczysko <j.lasocki-biczysko@intrallect.com>"
   ]
 }
