@@ -1,3 +1,13 @@
+<a name="1.1.0"></a>
+# [1.1.0](https://github.com/karma-runner/karma-junit-reporter/compare/v1.0.0...v1.1.0) (2016-06-26)
+
+
+### Bug Fixes
+
+* add defensive checks to safely handle browser disconnects. ([485d87a](https://github.com/karma-runner/karma-junit-reporter/commit/485d87a))
+
+
+
 <a name="1.0.0"></a>
 # [1.0.0](https://github.com/karma-runner/karma-junit-reporter/compare/v0.4.2...v1.0.0) (2016-05-03)
 
