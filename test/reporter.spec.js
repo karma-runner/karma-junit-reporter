@@ -4,6 +4,7 @@ var chai = require('chai')
 var expect = require('chai').expect
 var sinon = require('sinon')
 var proxyquire = require('proxyquire')
+var semver = require('semver')
 
 chai.use(require('sinon-chai'))
 
@@ -21,7 +22,8 @@ var fakeHelper = {
 var fakeConfig = {
   basePath: __dirname,
   junitReporter: {
-    outputFile: ''
+    outputFile: '',
+    includeTestSuiteInFilename: true
   }
 }
 
@@ -103,5 +105,41 @@ describe('JUnit reporter', function () {
 
     // never pass a null value to XMLAttribute via xmlbuilder attr()
     expect(reporter.onBrowserComplete.bind(reporter, badBrowserResult)).not.to.throw(Error)
+  })
+
+  it('should include testsuite name in filename', function () {
+    var fakeBrowser = {
+      id: 'Android_4_1_2',
+      name: 'Android',
+      fullName: 'Android 4.1.2',
+      lastResult: {
+        error: false,
+        total: 1,
+        failed: 0,
+        netTime: 10 * 1000
+      }
+    }
+
+    var fakeResult = {
+      suite: [
+        'Test:Suite',
+        'using it',
+        'get request'
+      ],
+      description: 'should not fail',
+      log: []
+    }
+
+    reporter.onRunStart([ fakeBrowser ])
+    reporter.specSuccess(fakeBrowser, fakeResult)
+    reporter.onBrowserComplete(fakeBrowser)
+    reporter.onRunComplete()
+
+    if (semver.gtr(process.versions.node, '0.11.0', '0.10.0')) {
+      var filePath = fakeFs.writeFile.firstCall.args[0]
+      expect(filePath).to.have.string('_Test_Suite')
+    } else {
+      this.skip()
+    }
   })
 })

@@ -18,6 +18,7 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
   var useBrowserName = reporterConfig.useBrowserName
   var nameFormatter = reporterConfig.nameFormatter || defaultNameFormatter
   var classNameFormatter = reporterConfig.classNameFormatter
+  var includeTestSuiteInFilename = reporterConfig.includeTestSuiteInFilename || false
   var properties = reporterConfig.properties
 
   var suites
@@ -83,6 +84,10 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
       return // don't die if browser didn't start
     }
 
+    if (includeTestSuiteInFilename && path.parse) {
+      newOutputFile = appendTestSuiteName(newOutputFile, xmlToOutput.suiteName)
+    }
+
     pendingFileWritings++
     helper.mkdirIfNotExists(path.dirname(newOutputFile), function () {
       fs.writeFile(newOutputFile, xmlToOutput.end({pretty: true}), function (err) {
@@ -97,6 +102,20 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
         }
       })
     })
+  }
+
+  var appendTestSuiteName = function (filePath, testSuiteName) {
+    var parsedPath = path.parse(filePath)
+    var filename
+
+    if (testSuiteName) {
+      testSuiteName = testSuiteName.replace(/[^a-z0-9]/gi, '_')
+      testSuiteName = '_' + testSuiteName
+    }
+
+    filename = parsedPath['name'] + testSuiteName + parsedPath['ext']
+
+    return path.join(parsedPath['root'], parsedPath['dir'], filename)
   }
 
   var getClassName = function (browser, result) {
@@ -161,6 +180,8 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
         spec.ele('failure', {type: ''}, formatError(err))
       })
     }
+
+    testsuite.suiteName = result.suite[0] ? result.suite[0] : ''
   }
 
   // wait for writing all the xml files, before exiting
