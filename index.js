@@ -29,8 +29,6 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
     outputDir = '.'
   }
 
-  outputDir = helper.normalizeWinPath(path.resolve(config.basePath, outputDir)) + path.sep
-
   if (typeof useBrowserName === 'undefined') {
     useBrowserName = true
   }
@@ -66,16 +64,38 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
   var writeXmlForBrowser = function (browser) {
     var safeBrowserName = browser.name.replace(/ /g, '_')
     var newOutputFile
-    if (outputFile && pathIsAbsolute(outputFile)) {
+    var newOutputDir
+    var generatedOutputFile
+    var dir
+
+    if (typeof outputFile === 'function') {
+      generatedOutputFile = outputFile(browser)
+    }
+
+    if (typeof outputDir === 'function') {
+      newOutputDir = outputDir(browser)
+    } else {
+      newOutputDir = outputDir
+    }
+
+    newOutputDir = helper.normalizeWinPath(path.resolve(config.basePath, newOutputDir)) + path.sep
+
+    if (generatedOutputFile && pathIsAbsolute(generatedOutputFile)) {
+      newOutputFile = generatedOutputFile
+    } else if (!generatedOutputFile && outputFile && pathIsAbsolute(outputFile)) {
       newOutputFile = outputFile
-    } else if (outputFile != null) {
-      var dir = useBrowserName ? path.join(outputDir, safeBrowserName)
-                               : outputDir
+    } else if (generatedOutputFile != null) {
+      dir = useBrowserName ? path.join(newOutputDir, safeBrowserName)
+                               : newOutputDir
+      newOutputFile = path.join(dir, generatedOutputFile)
+    } else if (outputFile != null && typeof outputFile !== 'function') {
+      dir = useBrowserName ? path.join(newOutputDir, safeBrowserName)
+                               : newOutputDir
       newOutputFile = path.join(dir, outputFile)
     } else if (useBrowserName) {
-      newOutputFile = path.join(outputDir, 'TESTS-' + safeBrowserName + '.xml')
+      newOutputFile = path.join(newOutputDir, 'TESTS-' + safeBrowserName + '.xml')
     } else {
-      newOutputFile = path.join(outputDir, 'TESTS.xml')
+      newOutputFile = path.join(newOutputDir, 'TESTS.xml')
     }
 
     var xmlToOutput = suites[browser.id]
