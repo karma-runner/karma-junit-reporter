@@ -105,6 +105,7 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
     return (useBrowserName ? browserName : '') + (pkgName ? pkgName + '.' : '') + result.suite[0]
   }
 
+  // "run_start" - a test run is beginning for all browsers
   this.onRunStart = function (browsers) {
     suites = Object.create(null)
 
@@ -112,10 +113,12 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
     browsers.forEach(initializeXmlForBrowser)
   }
 
+  // "browser_start" - a test run is beginning in _this_ browser
   this.onBrowserStart = function (browser) {
     initializeXmlForBrowser(browser)
   }
 
+  // "browser_complete" - a test run has completed in _this_ browser
   this.onBrowserComplete = function (browser) {
     var suite = suites[browser.id]
     var result = browser.lastResult
@@ -134,8 +137,8 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
     writeXmlForBrowser(browser)
   }
 
+  // "run_complete" - a test run has completed on all browsers
   this.onRunComplete = function () {
-    suites = null
     allMessages.length = 0
   }
 
