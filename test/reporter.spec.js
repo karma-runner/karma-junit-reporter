@@ -104,4 +104,30 @@ describe('JUnit reporter', function () {
     // never pass a null value to XMLAttribute via xmlbuilder attr()
     expect(reporter.onBrowserComplete.bind(reporter, badBrowserResult)).not.to.throw(Error)
   })
+
+  it('should safely handle test re-runs triggered by watchers', function () {
+    var fakeBrowser = {
+      id: 'Android_4_1_2',
+      name: 'Android',
+      fullName: 'Android 4.1.2',
+      lastResult: {
+        error: false,
+        total: 1,
+        failed: 0,
+        netTime: 10 * 1000
+      }
+    }
+
+    reporter.onRunStart([ fakeBrowser ])
+    reporter.onBrowserStart(fakeBrowser)
+
+    // When a watcher triggers a second test run, onRunStart() for the second
+    // run gets triggered, followed by onRunComplete() from the first test run.
+    reporter.onRunStart([ fakeBrowser ])
+    reporter.onRunComplete()
+
+    reporter.onBrowserStart(fakeBrowser)
+    reporter.onBrowserComplete(fakeBrowser)
+    reporter.onRunComplete()
+  })
 })
