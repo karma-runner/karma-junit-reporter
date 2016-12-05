@@ -20,7 +20,7 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
   var classNameFormatter = reporterConfig.classNameFormatter
   var properties = reporterConfig.properties
 
-  var suites
+  var suites = []
   var pendingFileWritings = 0
   var fileWritingFinished = function () {}
   var allMessages = []
@@ -107,8 +107,6 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
 
   // "run_start" - a test run is beginning for all browsers
   this.onRunStart = function (browsers) {
-    suites = Object.create(null)
-
     // TODO(vojta): remove once we don't care about Karma 0.10
     browsers.forEach(initializeXmlForBrowser)
   }
