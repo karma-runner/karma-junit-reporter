@@ -133,6 +133,9 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
     suite.ele('system-err')
 
     writeXmlForBrowser(browser)
+
+    // Release memory held by the test suite.
+    suites[browser.id] = null
   }
 
   // "run_complete" - a test run has completed on all browsers
