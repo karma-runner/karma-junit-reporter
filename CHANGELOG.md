@@ -1,3 +1,15 @@
+<a name="1.2.0"></a>
+# [1.2.0](https://github.com/karma-runner/karma-junit-reporter/compare/v1.1.0...v1.2.0) (2016-12-06)
+
+
+### Bug Fixes
+
+* initialize var suites early  ([e09acb2](https://github.com/karma-runner/karma-junit-reporter/commit/e09acb2))
+* release memory held by a testsuite after we're done with it. ([eacf8bb](https://github.com/karma-runner/karma-junit-reporter/commit/eacf8bb))
+* remove unnecessary nulling out of `suites` ([4202ee8](https://github.com/karma-runner/karma-junit-reporter/commit/4202ee8)), closes [#99](https://github.com/karma-runner/karma-junit-reporter/issues/99)
+
+
+
 <a name="1.1.0"></a>
 # [1.1.0](https://github.com/karma-runner/karma-junit-reporter/compare/v1.0.0...v1.1.0) (2016-06-26)
 
