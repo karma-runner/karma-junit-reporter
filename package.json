@@ -48,18 +48,19 @@
     "sinon-chai": "^2.8.0"
   },
   "contributors": [
-    "Vojta Jina <vojta.jina@gmail.com>",
     "Friedel Ziegelmayer <dignifiedquire@gmail.com>",
+    "Vojta Jina <vojta.jina@gmail.com>",
     "Mark Ethan Trostler <mark@zzo.com>",
     "Simen Bekkhus <sbekkhus91@gmail.com>",
     "Friedel Ziegelmayer <friedel.ziegelmayer@gmail.com>",
     "Janek Lasocki-Biczysko <iamjanek@gmail.com>",
+    "greenkeeperio-bot <support@greenkeeper.io>",
     "Craig Vermeer <craig@vermeers.net>",
-    "John Haugeland <stonecypher@gmail.com>",
-    "Kira Cheung <killercentury@gmail.com>",
+    "Floris Kraak <randakar@gmail.com>",
     "Larry Myers <larry@larrymyers.com>",
     "Maksim Ryzhikov <rv.maksim@gmail.com>",
     "Martin Leonhartsberger <mschrott@splunk.com>",
+    "Marvin Tam <thatmarvin@users.noreply.github.com>",
     "Matthias Oßwald <matz3@users.noreply.github.com>",
     "Mike Ng <mike.ng@optimizely.com>",
     "Nikita Shirin <shirin.nikita@gmail.com>",
@@ -79,6 +80,8 @@
     "Cesar Andreu <cesarandreu@gmail.com>",
     "David Pärsson <david@parsson.se>",
     "Derek Schaller <dschaller@lyft.com>",
-    "Janek Lasocki-Biczysko <j.lasocki-biczysko@intrallect.com>"
+    "Janek Lasocki-Biczysko <j.lasocki-biczysko@intrallect.com>",
+    "John Haugeland <stonecypher@gmail.com>",
+    "Kira Cheung <killercentury@gmail.com>"
   ]
 }
