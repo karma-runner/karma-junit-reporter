@@ -20,7 +20,7 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
   var classNameFormatter = reporterConfig.classNameFormatter
   var properties = reporterConfig.properties
 
-  var suites = []
+  var suites = {}
   var pendingFileWritings = 0
   var fileWritingFinished = function () {}
   var allMessages = []
