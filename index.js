@@ -3,6 +3,7 @@ var path = require('path')
 var fs = require('fs')
 var builder = require('xmlbuilder')
 var pathIsAbsolute = require('path-is-absolute')
+var sanitizeFilename = require('sanitize-filename')
 
 // concatenate test suite(s) and test description by default
 function defaultNameFormatter (browser, result) {
@@ -64,7 +65,7 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
   }
 
   var writeXmlForBrowser = function (browser) {
-    var safeBrowserName = browser.name.replace(/ /g, '_')
+    var safeBrowserName = sanitizeFilename(browser.name, { replacement: '_' }).replace(/ /g, '_')
     var newOutputFile
     if (outputFile && pathIsAbsolute(outputFile)) {
       newOutputFile = outputFile

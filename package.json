@@ -21,6 +21,7 @@
   "author": "Vojta Jina <vojta.jina@gmail.com>",
   "dependencies": {
     "path-is-absolute": "^1.0.0",
+    "sanitize-filename": "1.4.5",
     "xmlbuilder": "8.2.2"
   },
   "peerDependencies": {
