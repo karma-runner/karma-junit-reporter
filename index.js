@@ -45,6 +45,9 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
 
   var initializeXmlForBrowser = function (browser) {
     var timestamp = (new Date()).toISOString().substr(0, 19)
+    if( suites == null ) {
+      suites = Object.create(null) // OnRunStart() didn't fire yet, but it's not too late..
+    }
     var suite = suites[browser.id] = builder.create('testsuite')
     suite.att('name', browser.name)
       .att('package', pkgName)
@@ -77,7 +80,10 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
     } else {
       newOutputFile = path.join(outputDir, 'TESTS.xml')
     }
-
+    
+    if( suites == null ) {
+      return // Initialisation hasn't run yet - bail out.
+    }
     var xmlToOutput = suites[browser.id]
     if (!xmlToOutput) {
       return // don't die if browser didn't start
@@ -118,6 +124,9 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
 
   // "browser_complete" - a test run has completed in _this_ browser
   this.onBrowserComplete = function (browser) {
+    if( suites == null ) {
+      return // initialisation hasn't run yet - bail out.
+    }
     var suite = suites[browser.id]
     var result = browser.lastResult
     if (!suite || !result) {
@@ -144,6 +153,10 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
   }
 
   this.specSuccess = this.specSkipped = this.specFailure = function (browser, result) {
+ 
+    if( suites == null ) {
+      return; // Initialisation hasn't run yet, so no suites object, so no results.
+    }
     var testsuite = suites[browser.id]
 
     if (!testsuite) {
