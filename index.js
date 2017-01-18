@@ -2,6 +2,12 @@ var os = require('os')
 var path = require('path')
 var fs = require('fs')
 var builder = require('xmlbuilder')
+var pathIsAbsolute = require('path-is-absolute')
+
+// concatenate test suite(s) and test description by default
+function defaultNameFormatter (browser, result) {
+  return result.suite.join(' ') + ' ' + result.description
+}
 
 var JUnitReporter = function (baseReporterDecorator, config, logger, helper, formatError) {
   var log = logger.create('reporter.junit')
@@ -10,8 +16,11 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
   var outputDir = reporterConfig.outputDir
   var outputFile = reporterConfig.outputFile
   var useBrowserName = reporterConfig.useBrowserName
+  var nameFormatter = reporterConfig.nameFormatter || defaultNameFormatter
+  var classNameFormatter = reporterConfig.classNameFormatter
+  var properties = reporterConfig.properties
 
-  var suites
+  var suites = []
   var pendingFileWritings = 0
   var fileWritingFinished = function () {}
   var allMessages = []
@@ -43,14 +52,23 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
       .att('id', 0)
       .att('hostname', os.hostname())
 
-    suite.ele('properties')
-      .ele('property', {name: 'browser.fullName', value: browser.fullName})
+    var propertiesElement = suite.ele('properties')
+    propertiesElement.ele('property', {name: 'browser.fullName', value: browser.fullName})
+
+    // add additional properties passed in through the config
+    for (var property in properties) {
+      if (properties.hasOwnProperty(property)) {
+        propertiesElement.ele('property', {name: property, value: properties[property]})
+      }
+    }
   }
 
   var writeXmlForBrowser = function (browser) {
     var safeBrowserName = browser.name.replace(/ /g, '_')
     var newOutputFile
-    if (outputFile != null) {
+    if (outputFile && pathIsAbsolute(outputFile)) {
+      newOutputFile = outputFile
+    } else if (outputFile != null) {
       var dir = useBrowserName ? path.join(outputDir, safeBrowserName)
                                : outputDir
       newOutputFile = path.join(dir, outputFile)
@@ -97,17 +115,18 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
     return name
   }
 
+  // "run_start" - a test run is beginning for all browsers
   this.onRunStart = function (browsers) {
-    suites = Object.create(null)
-
     // TODO(vojta): remove once we don't care about Karma 0.10
     browsers.forEach(initializeXmlForBrowser)
   }
 
+  // "browser_start" - a test run is beginning in _this_ browser
   this.onBrowserStart = function (browser) {
     initializeXmlForBrowser(browser)
   }
 
+  // "browser_complete" - a test run has completed in _this_ browser
   this.onBrowserComplete = function (browser) {
     var suite = suites[browser.id]
     var result = browser.lastResult
@@ -115,26 +134,36 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
       return // don't die if browser didn't start
     }
 
-    suite.att('tests', result.total)
+    suite.att('tests', result.total ? result.total : 0)
     suite.att('errors', result.disconnected || result.error ? 1 : 0)
-    suite.att('failures', result.failed)
+    suite.att('failures', result.failed ? result.failed : 0)
     suite.att('time', (result.netTime || 0) / 1000)
 
     suite.ele('system-out').dat(allMessages.join() + '\n')
     suite.ele('system-err')
 
     writeXmlForBrowser(browser)
+
+    // Release memory held by the test suite.
+    suites[browser.id] = null
   }
 
+  // "run_complete" - a test run has completed on all browsers
   this.onRunComplete = function () {
-    suites = null
     allMessages.length = 0
   }
 
   this.specSuccess = this.specSkipped = this.specFailure = function (browser, result) {
-    var spec = suites[browser.id].ele('testcase', {
-      name: result.description, time: ((result.time || 0) / 1000),
-      classname: getClassName(browser, result)
+    var testsuite = suites[browser.id]
+
+    if (!testsuite) {
+      return
+    }
+
+    var spec = testsuite.ele('testcase', {
+      name: nameFormatter(browser, result),
+      time: ((result.time || 0) / 1000),
+      classname: (typeof classNameFormatter === 'function' ? classNameFormatter : getClassName)(browser, result)
     })
 
     if (result.skipped) {

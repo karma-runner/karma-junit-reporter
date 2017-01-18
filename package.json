@@ -1,6 +1,6 @@
 {
   "name": "karma-junit-reporter",
-  "version": "0.3.8",
+  "version": "1.2.0",
   "description": "A Karma plugin. Report results in junit xml format.",
   "main": "index.js",
   "files": [
@@ -20,7 +20,8 @@
   ],
   "author": "Vojta Jina <vojta.jina@gmail.com>",
   "dependencies": {
-    "xmlbuilder": "3.1.0"
+    "path-is-absolute": "^1.0.0",
+    "xmlbuilder": "8.2.2"
   },
   "peerDependencies": {
     "karma": ">=0.9"
@@ -28,30 +29,43 @@
   "license": "MIT",
   "devDependencies": {
     "chai": "^3.5.0",
-    "eslint": "^1.2.1",
-    "eslint-config-standard": "^4.1.0",
+    "eslint": "^3.11.1",
+    "eslint-config-standard": "^5.3.1",
+    "eslint-plugin-promise": "^1.3.2",
     "eslint-plugin-standard": "^1.3.1",
-    "grunt": "^0.4.1",
-    "grunt-bump": "^0.5.0",
-    "grunt-conventional-changelog": "^4.1.0",
-    "grunt-conventional-github-releaser": "^0.4.0",
-    "grunt-eslint": "^17.1.0",
+    "grunt": "^1.0.1",
+    "grunt-bump": "^0.8.0",
+    "grunt-cli": "^1.2.0",
+    "grunt-conventional-changelog": "^6.1.0",
+    "grunt-conventional-github-releaser": "^1.0.0",
+    "grunt-eslint": "^18.1.0",
     "grunt-npm": "^0.0.2",
+    "grunt-simple-mocha": "^0.4.1",
     "load-grunt-tasks": "^3.2.0",
-    "mocha": "^2.4.5",
-    "should": ">= 0.0.1"
+    "mocha": "^3.2.0",
+    "proxyquire": "^1.7.4",
+    "sinon": "^1.17.3",
+    "sinon-chai": "^2.8.0"
   },
   "contributors": [
-    "dignifiedquire <dignifiedquire@gmail.com>",
     "Friedel Ziegelmayer <dignifiedquire@gmail.com>",
+    "Vojta Jina <vojta.jina@gmail.com>",
+    "Mark Ethan Trostler <mark@zzo.com>",
     "Simen Bekkhus <sbekkhus91@gmail.com>",
     "Friedel Ziegelmayer <friedel.ziegelmayer@gmail.com>",
     "Janek Lasocki-Biczysko <iamjanek@gmail.com>",
-    "Janek Lasocki-Biczysko <j.lasocki-biczysko@intrallect.com>",
-    "John Haugeland <stonecypher@gmail.com>",
-    "Kira Cheung <killercentury@gmail.com>",
+    "greenkeeperio-bot <support@greenkeeper.io>",
+    "Craig Vermeer <craig@vermeers.net>",
+    "Floris Kraak <randakar@gmail.com>",
+    "Larry Myers <larry@larrymyers.com>",
     "Maksim Ryzhikov <rv.maksim@gmail.com>",
+    "Martin Leonhartsberger <mschrott@splunk.com>",
+    "Marvin Tam <thatmarvin@users.noreply.github.com>",
+    "Matthias Oßwald <matz3@users.noreply.github.com>",
+    "Mike Ng <mike.ng@optimizely.com>",
     "Nikita Shirin <shirin.nikita@gmail.com>",
+    "Paweł Gesek <pgesek@soldevelo.com>",
+    "Phillip Johnsen <johphi@gmail.com>",
     "Rob Richardson <robrich@robrich.org>",
     "Sylvain Hamel <sylvainhamel0@gmail.com>",
     "Trey Hyde <thyde@centraldesktop.com>",
@@ -64,6 +78,10 @@
     "Brian Donovan <me@brian-donovan.com>",
     "Brian Meneses <brian.meneses@gmail.com>",
     "Cesar Andreu <cesarandreu@gmail.com>",
-    "David Pärsson <david@parsson.se>"
+    "David Pärsson <david@parsson.se>",
+    "Derek Schaller <dschaller@lyft.com>",
+    "Janek Lasocki-Biczysko <j.lasocki-biczysko@intrallect.com>",
+    "John Haugeland <stonecypher@gmail.com>",
+    "Kira Cheung <killercentury@gmail.com>"
   ]
 }

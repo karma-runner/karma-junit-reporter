@@ -1,3 +1,66 @@
+<a name="1.2.0"></a>
+# [1.2.0](https://github.com/karma-runner/karma-junit-reporter/compare/v1.1.0...v1.2.0) (2016-12-06)
+
+
+### Bug Fixes
+
+* initialize var suites early  ([e09acb2](https://github.com/karma-runner/karma-junit-reporter/commit/e09acb2))
+* release memory held by a testsuite after we're done with it. ([eacf8bb](https://github.com/karma-runner/karma-junit-reporter/commit/eacf8bb))
+* remove unnecessary nulling out of `suites` ([4202ee8](https://github.com/karma-runner/karma-junit-reporter/commit/4202ee8)), closes [#99](https://github.com/karma-runner/karma-junit-reporter/issues/99)
+
+
+
+<a name="1.1.0"></a>
+# [1.1.0](https://github.com/karma-runner/karma-junit-reporter/compare/v1.0.0...v1.1.0) (2016-06-26)
+
+
+### Bug Fixes
+
+* add defensive checks to safely handle browser disconnects. ([485d87a](https://github.com/karma-runner/karma-junit-reporter/commit/485d87a))
+
+
+
+<a name="1.0.0"></a>
+# [1.0.0](https://github.com/karma-runner/karma-junit-reporter/compare/v0.4.2...v1.0.0) (2016-05-03)
+
+
+
+
+<a name="0.4.2"></a>
+## [0.4.2](https://github.com/karma-runner/karma-junit-reporter/compare/v0.4.1...v0.4.2) (2016-04-08)
+
+
+### Features
+
+* Add support for additional properties to add to the report section ([b67d234](https://github.com/karma-runner/karma-junit-reporter/commit/b67d234))
+
+
+
+<a name="0.4.1"></a>
+## [0.4.1](https://github.com/karma-runner/karma-junit-reporter/compare/v0.4.0...v0.4.1) (2016-03-21)
+
+
+### Bug Fixes
+
+* check if outputFile is set before checking for absolute outputFile ([c8887ac](https://github.com/karma-runner/karma-junit-reporter/commit/c8887ac)), closes [#87](https://github.com/karma-runner/karma-junit-reporter/issues/87)
+
+
+
+<a name="0.4.0"></a>
+# [0.4.0](https://github.com/karma-runner/karma-junit-reporter/compare/v0.3.8...v0.4.0) (2016-03-10)
+
+
+### Bug Fixes
+
+* Handle absolute outputFile paths in Junit Reporter ([d5dc808](https://github.com/karma-runner/karma-junit-reporter/commit/d5dc808)), closes [#83](https://github.com/karma-runner/karma-junit-reporter/issues/83)
+* test name to contain parent suite(s) names ([8e6e202](https://github.com/karma-runner/karma-junit-reporter/commit/8e6e202)), closes [#62](https://github.com/karma-runner/karma-junit-reporter/issues/62)
+
+### Features
+
+* add name and classname formatters ([3f43c51](https://github.com/karma-runner/karma-junit-reporter/commit/3f43c51)), closes [#75](https://github.com/karma-runner/karma-junit-reporter/issues/75)
+
+
+
 <a name="0.3.8"></a>
 ## [0.3.8](https://github.com/karma-runner/karma-junit-reporter/compare/v0.3.7...v0.3.8) (2015-10-20)
 
