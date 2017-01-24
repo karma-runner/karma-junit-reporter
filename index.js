@@ -121,16 +121,11 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
       newOutputFile = path.join(outputDir, 'TESTS.xml')
     }
 
-    // Grab a handle to the XML having being produced so far
     var xmlToOutput = suites[browser.id]
 
-    // if there is no XML produced, means...
     if (!xmlToOutput) {
       return // don't die if browser didn't start
     }
-
-    // Here we should close the <file> tag in XML
-    // This tag contains all testCase as equal children
 
     pendingFileWritings++
     helper.mkdirIfNotExists(path.dirname(newOutputFile), function () {
