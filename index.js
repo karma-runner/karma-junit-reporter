@@ -4,19 +4,8 @@ var fs = require('fs')
 var builder = require('xmlbuilder')
 var pathIsAbsolute = require('path-is-absolute')
 
-
-/*
-  WIP: 
-   1. Get the <file> tag working: has testCase nested, and is closed at the end, bef. </unitTest>
-   2. Add docs so that the version handling variables are understood
-   3. Think about what the final name and values range for the XML configuration would b
-   4. Differentiate all code so that legacy mode works as-was
-   5. Explain and think about whether the NEWXML flag is a good thing or not
-   6. Doc: limitations: the XML version to be used is per-test-run (cannot be altered in between)
-
-*/
-
-/* XML schemas supported by the reporter: 'XMLconfigValue' variable
+/* XML schemas supported by the reporter: 'xmlVersion' in karma.conf.js, 
+   'XMLconfigValue' as variable here. 
    0 = "old", original XML format. For example, SonarQube versions prior to 6.2
    1 = first amended version. Compatible with SonarQube starting from 6.2
 */
@@ -47,12 +36,13 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
   var fileWritingFinished = function () {}
   var allMessages = []
 
-  // The NEWXML is just sugar, a flag. Remove it when there are more than 2 
+  // The NEWXML is just sugar, a flag. Remove it when there are more than 2
   // supported XML output formats.
   if (!XMLconfigValue) {
     XMLconfigValue = 0
     NEWXML = false
   } else {
+    // Slack behavior: "If defined, assume to be 1" since we have only two formats now
     XMLconfigValue = 1
     NEWXML = true
   }
@@ -102,7 +92,7 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
       }
     }
   }
-  
+
 
   // This function takes care of writing the XML into a file
   var writeXmlForBrowser = function (browser) {
@@ -142,7 +132,7 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
       })
     })
   }
- 
+
 
   // Return a 'safe' name for test. This will be the name="..." content in XML.
   var getClassName = function (browser, result) {
@@ -203,8 +193,8 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
     allMessages.length = 0
   }
 
- 
-  // -------------------------------------- 
+
+  // --------------------------------------
   // | The XML for individual testCase    |
   // --------------------------------------
   this.specSuccess = this.specSkipped = this.specFailure = function (browser, result) {
@@ -225,19 +215,19 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
       }
     }
 
-    // create the tag for a new test case 
+    // create the tag for a new test case
     /*
     if (NEWXML) {
       spec = testsuite.ele('testCase', {
       name: nameFormatter(browser, result),
-      duration: validMilliTime }) 
-    } 
+      duration: validMilliTime })
+    }
     */
 
     if (NEWXML) {
       spec = exposee.ele('testCase', {
       name: nameFormatter(browser, result),
-      duration: validMilliTime }) 
+      duration: validMilliTime })
     } else {
       // old XML format. Code as-was
       spec = testsuite.ele('testcase', {
@@ -245,12 +235,6 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
         time: ((result.time || 0) / 1000),
         classname: (typeof classNameFormatter === 'function' ? classNameFormatter : getClassName)(browser, result)
       })
-
-      if (!result.success) {
-        result.log.forEach(function (err) {
-          spec.ele('failure', {type: ''}, formatError(err))
-        })
-      }
     }
 
     if (result.skipped) {
@@ -259,10 +243,12 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
 
     if (!result.success) {
       result.log.forEach(function (err) {
-        /* Old format: pre SonarQube 6.2 
-        spec.ele('failure', {type: ''}, formatError(err)) */
-        // In new format, there is a obligatory 'message' attribute in failure
-        spec.ele('failure', {message: formatError(err)})
+        if (!NEWXML) {
+          spec.ele('failure', {type: ''}, formatError(err))
+        } else {
+        // In new XML format, an obligatory 'message' attribute in failure
+          spec.ele('failure', {message: formatError(err)})
+        }
       })
     }
   }
