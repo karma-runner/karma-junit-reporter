@@ -4,6 +4,23 @@ var fs = require('fs')
 var builder = require('xmlbuilder')
 var pathIsAbsolute = require('path-is-absolute')
 
+
+/*
+  WIP: 
+   1. Get the <file> tag working: has testCase nested, and is closed at the end, bef. </unitTest>
+   2. Add docs so that the version handling variables are understood
+   3. Think about what the final name and values range for the XML configuration would b
+   4. Differentiate all code so that legacy mode works as-was
+   5. Explain and think about whether the NEWXML flag is a good thing or not
+   6. Doc: limitations: the XML version to be used is per-test-run (cannot be altered in between)
+
+*/
+
+/* XML schemas supported by the reporter: 'XMLconfigValue' variable
+   0 = "old", original XML format. For example, SonarQube versions prior to 6.2
+   1 = first amended version. Compatible with SonarQube starting from 6.2
+*/
+
 // concatenate test suite(s) and test description by default
 function defaultNameFormatter (browser, result) {
   return result.suite.join(' ') + ' ' + result.description
@@ -19,11 +36,26 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
   var nameFormatter = reporterConfig.nameFormatter || defaultNameFormatter
   var classNameFormatter = reporterConfig.classNameFormatter
   var properties = reporterConfig.properties
+  // The below two variables have to do with adding support for new XML format
+  var XMLconfigValue = reporterConfig.xmlVersion
+  var NEWXML
+  // We need one global variable for the tag <file> to be visible to functions
+  var exposee
 
   var suites = []
   var pendingFileWritings = 0
   var fileWritingFinished = function () {}
   var allMessages = []
+
+  // The NEWXML is just sugar, a flag. Remove it when there are more than 2 
+  // supported XML output formats.
+  if (!XMLconfigValue) {
+    XMLconfigValue = 0
+    NEWXML = false
+  } else {
+    XMLconfigValue = 1
+    NEWXML = true
+  }
 
   if (outputDir == null) {
     outputDir = '.'
@@ -43,27 +75,38 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
     }
   ]
 
+
+  // Creates the outermost XML element: <unitTest>
   var initializeXmlForBrowser = function (browser) {
     var timestamp = (new Date()).toISOString().substr(0, 19)
-    var suite = suites[browser.id] = builder.create('testsuite')
-    suite.att('name', browser.name)
+    var suite
+    if (NEWXML) {
+      suite = suites[browser.id] = builder.create('unitTest')
+      suite.att('version', '1')
+      exposee = suite.ele('file', {'path': 'fixedString'});
+    } else {
+      suite = suites[browser.id] = builder.create('testsuite')
+      suite.att('name', browser.name)
       .att('package', pkgName)
       .att('timestamp', timestamp)
       .att('id', 0)
       .att('hostname', os.hostname())
+      var propertiesElement = suite.ele('properties')
+      propertiesElement.ele('property', {name: 'browser.fullName', value: browser.fullName})
 
-    var propertiesElement = suite.ele('properties')
-    propertiesElement.ele('property', {name: 'browser.fullName', value: browser.fullName})
-
-    // add additional properties passed in through the config
-    for (var property in properties) {
-      if (properties.hasOwnProperty(property)) {
-        propertiesElement.ele('property', {name: property, value: properties[property]})
+      // add additional properties passed in through the config
+      for (var property in properties) {
+        if (properties.hasOwnProperty(property)) {
+          propertiesElement.ele('property', {name: property, value: properties[property]})
+        }
       }
     }
   }
+  
 
+  // This function takes care of writing the XML into a file
   var writeXmlForBrowser = function (browser) {
+    // Define the file name using rules
     var safeBrowserName = browser.name.replace(/ /g, '_')
     var newOutputFile
     if (outputFile && pathIsAbsolute(outputFile)) {
@@ -78,10 +121,16 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
       newOutputFile = path.join(outputDir, 'TESTS.xml')
     }
 
+    // Grab a handle to the XML having being produced so far
     var xmlToOutput = suites[browser.id]
+
+    // if there is no XML produced, means...
     if (!xmlToOutput) {
       return // don't die if browser didn't start
     }
+
+    // Here we should close the <file> tag in XML
+    // This tag contains all testCase as equal children
 
     pendingFileWritings++
     helper.mkdirIfNotExists(path.dirname(newOutputFile), function () {
@@ -98,9 +147,12 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
       })
     })
   }
+ 
 
+  // Return a 'safe' name for test. This will be the name="..." content in XML.
   var getClassName = function (browser, result) {
     var name = ''
+    // configuration tells whether to use browser name at all
     if (useBrowserName) {
       name += browser.name
         .replace(/ /g, '_')
@@ -115,6 +167,7 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
     return name
   }
 
+
   // "run_start" - a test run is beginning for all browsers
   this.onRunStart = function (browsers) {
     // TODO(vojta): remove once we don't care about Karma 0.10
@@ -127,6 +180,7 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
   }
 
   // "browser_complete" - a test run has completed in _this_ browser
+  // writes the XML to file and releases memory
   this.onBrowserComplete = function (browser) {
     var suite = suites[browser.id]
     var result = browser.lastResult
@@ -134,13 +188,14 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
       return // don't die if browser didn't start
     }
 
-    suite.att('tests', result.total ? result.total : 0)
-    suite.att('errors', result.disconnected || result.error ? 1 : 0)
-    suite.att('failures', result.failed ? result.failed : 0)
-    suite.att('time', (result.netTime || 0) / 1000)
-
-    suite.ele('system-out').dat(allMessages.join() + '\n')
-    suite.ele('system-err')
+    if (!NEWXML) {
+      suite.att('tests', result.total ? result.total : 0)
+      suite.att('errors', result.disconnected || result.error ? 1 : 0)
+      suite.att('failures', result.failed ? result.failed : 0)
+      suite.att('time', (result.netTime || 0) / 1000)
+      suite.ele('system-out').dat(allMessages.join() + '\n')
+      suite.ele('system-err')
+    }
 
     writeXmlForBrowser(browser)
 
@@ -153,18 +208,55 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
     allMessages.length = 0
   }
 
+ 
+  // -------------------------------------- 
+  // | The XML for individual testCase    |
+  // --------------------------------------
   this.specSuccess = this.specSkipped = this.specFailure = function (browser, result) {
     var testsuite = suites[browser.id]
+    var validMilliTime
+    var spec
 
     if (!testsuite) {
       return
     }
 
-    var spec = testsuite.ele('testcase', {
+    // New in the XSD schema: only name and duration. classname is obsoleted
+    if (NEWXML) {
+      if (!result.time || result.time === 0) {
+        validMilliTime = 1
+      } else {
+        validMilliTime = result.time
+      }
+    }
+
+    // create the tag for a new test case 
+    /*
+    if (NEWXML) {
+      spec = testsuite.ele('testCase', {
       name: nameFormatter(browser, result),
-      time: ((result.time || 0) / 1000),
-      classname: (typeof classNameFormatter === 'function' ? classNameFormatter : getClassName)(browser, result)
-    })
+      duration: validMilliTime }) 
+    } 
+    */
+
+    if (NEWXML) {
+      spec = exposee.ele('testCase', {
+      name: nameFormatter(browser, result),
+      duration: validMilliTime }) 
+    } else {
+      // old XML format. Code as-was
+      spec = testsuite.ele('testcase', {
+        name: nameFormatter(browser, result),
+        time: ((result.time || 0) / 1000),
+        classname: (typeof classNameFormatter === 'function' ? classNameFormatter : getClassName)(browser, result)
+      })
+
+      if (!result.success) {
+        result.log.forEach(function (err) {
+          spec.ele('failure', {type: ''}, formatError(err))
+        })
+      }
+    }
 
     if (result.skipped) {
       spec.ele('skipped')
@@ -172,7 +264,10 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
 
     if (!result.success) {
       result.log.forEach(function (err) {
-        spec.ele('failure', {type: ''}, formatError(err))
+        /* Old format: pre SonarQube 6.2 
+        spec.ele('failure', {type: ''}, formatError(err)) */
+        // In new format, there is a obligatory 'message' attribute in failure
+        spec.ele('failure', {message: formatError(err)})
       })
     }
   }
