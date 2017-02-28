@@ -4,8 +4,8 @@ var fs = require('fs')
 var builder = require('xmlbuilder')
 var pathIsAbsolute = require('path-is-absolute')
 
-/* XML schemas supported by the reporter: 'xmlVersion' in karma.conf.js, 
-   'XMLconfigValue' as variable here. 
+/* XML schemas supported by the reporter: 'xmlVersion' in karma.conf.js,
+   'XMLconfigValue' as variable here.
    0 = "old", original XML format. For example, SonarQube versions prior to 6.2
    1 = first amended version. Compatible with SonarQube starting from 6.2
 */
@@ -18,6 +18,7 @@ function defaultNameFormatter (browser, result) {
 var JUnitReporter = function (baseReporterDecorator, config, logger, helper, formatError) {
   var log = logger.create('reporter.junit')
   var reporterConfig = config.junitReporter || {}
+  // All reporterConfig.something are for reading flags from the Karma config file
   var pkgName = reporterConfig.suite || ''
   var outputDir = reporterConfig.outputDir
   var outputFile = reporterConfig.outputFile
@@ -25,12 +26,11 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
   var nameFormatter = reporterConfig.nameFormatter || defaultNameFormatter
   var classNameFormatter = reporterConfig.classNameFormatter
   var properties = reporterConfig.properties
-  // The below two variables have to do with adding support for new XML format
+  // The below two variables have to do with adding support for new SonarQube XML format
   var XMLconfigValue = reporterConfig.xmlVersion
-  var NEWXML
+  var NEWXML
   // We need one global variable for the tag <file> to be visible to functions
   var exposee
-
   var suites = []
   var pendingFileWritings = 0
   var fileWritingFinished = function () {}
@@ -65,7 +65,6 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
     }
   ]
 
-
   // Creates the outermost XML element: <unitTest>
   var initializeXmlForBrowser = function (browser) {
     var timestamp = (new Date()).toISOString().substr(0, 19)
@@ -73,7 +72,7 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
     if (NEWXML) {
       suite = suites[browser.id] = builder.create('unitTest')
       suite.att('version', '1')
-      exposee = suite.ele('file', {'path': 'fixedString'});
+      exposee = suite.ele('file', {'path': 'fixedString'})
     } else {
       suite = suites[browser.id] = builder.create('testsuite')
       suite.att('name', browser.name)
@@ -92,7 +91,6 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
       }
     }
   }
-
 
   // This function takes care of writing the XML into a file
   var writeXmlForBrowser = function (browser) {
@@ -133,7 +131,6 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
     })
   }
 
-
   // Return a 'safe' name for test. This will be the name="..." content in XML.
   var getClassName = function (browser, result) {
     var name = ''
@@ -151,7 +148,6 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
     }
     return name
   }
-
 
   // "run_start" - a test run is beginning for all browsers
   this.onRunStart = function (browsers) {
@@ -193,10 +189,9 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
     allMessages.length = 0
   }
 
-
-  // --------------------------------------
-  // | The XML for individual testCase    |
-  // --------------------------------------
+  // --------------------------------------------
+  // | Producing XML for individual testCase    |
+  // --------------------------------------------
   this.specSuccess = this.specSkipped = this.specFailure = function (browser, result) {
     var testsuite = suites[browser.id]
     var validMilliTime
@@ -226,8 +221,8 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
 
     if (NEWXML) {
       spec = exposee.ele('testCase', {
-      name: nameFormatter(browser, result),
-      duration: validMilliTime })
+        name: nameFormatter(browser, result),
+        duration: validMilliTime })
     } else {
       // old XML format. Code as-was
       spec = testsuite.ele('testcase', {
