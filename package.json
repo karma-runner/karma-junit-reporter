@@ -44,7 +44,7 @@
     "load-grunt-tasks": "^3.2.0",
     "mocha": "^3.2.0",
     "proxyquire": "^1.7.4",
-    "sinon": "^1.17.3",
+    "sinon": "^2.0.0",
     "sinon-chai": "^2.8.0"
   },
   "contributors": [
