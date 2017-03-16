@@ -19,6 +19,7 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
   var nameFormatter = reporterConfig.nameFormatter || defaultNameFormatter
   var classNameFormatter = reporterConfig.classNameFormatter
   var properties = reporterConfig.properties
+  var allowSurrogateChars = reporterConfig.allowSurrogateChars
 
   var suites = []
   var pendingFileWritings = 0
@@ -45,7 +46,12 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
 
   var initializeXmlForBrowser = function (browser) {
     var timestamp = (new Date()).toISOString().substr(0, 19)
-    var suite = suites[browser.id] = builder.create('testsuite')
+    var suite = suites[browser.id] = builder.create(
+      'testsuite',
+      null,
+      null,
+      { allowSurrogateChars: allowSurrogateChars }
+    )
     suite.att('name', browser.name)
       .att('package', pkgName)
       .att('timestamp', timestamp)
