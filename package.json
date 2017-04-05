@@ -24,7 +24,7 @@
     "xmlbuilder": "8.2.2"
   },
   "peerDependencies": {
-    "karma": ">=0.9"
+    "karma": ">=1.6.0"
   },
   "license": "MIT",
   "devDependencies": {
