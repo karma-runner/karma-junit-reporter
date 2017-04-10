@@ -27,8 +27,8 @@ module.exports = function(config) {
 
     // the default configuration
     junitReporter: {
-      outputDir: '', // results will be saved as $outputDir/$browserName.xml
-      outputFile: undefined, // if included, results will be saved as $outputDir/$browserName/$outputFile
+      outputDir: '', // string or function (browser), results will be saved as $outputDir/$browserName.xml
+      outputFile: undefined, // string or function (browser), if included, results will be saved as $outputDir/$browserName/$outputFile
       suite: '', // suite will become the package name attribute in xml testsuite element
       useBrowserName: true, // add browser name to report and classes names
       nameFormatter: undefined, // function (browser, result) to customize the name attribute in xml testcase element
