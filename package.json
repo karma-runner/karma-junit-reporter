@@ -26,6 +26,9 @@
   "peerDependencies": {
     "karma": ">=0.9"
   },
+  "engines": {
+    "node": ">= 6 < 9"
+  },
   "license": "MIT",
   "devDependencies": {
     "chai": "^3.5.0",
