@@ -20,36 +20,37 @@
   ],
   "author": "Vojta Jina <vojta.jina@gmail.com>",
   "dependencies": {
-    "path-is-absolute": "^1.0.0",
-    "xmlbuilder": "8.2.2"
+    "xmlbuilder": "^10.1.1"
   },
   "peerDependencies": {
     "karma": ">=0.9"
   },
   "engines": {
-    "node": ">= 6 < 9"
+    "node": ">=6"
   },
   "license": "MIT",
   "devDependencies": {
-    "chai": "^3.5.0",
-    "eslint": "^3.11.1",
-    "eslint-config-standard": "^5.3.1",
-    "eslint-plugin-promise": "^1.3.2",
-    "eslint-plugin-standard": "^1.3.1",
+    "chai": "^4.2.0",
+    "eslint": "^5.12.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-node": "^8.0.1",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0",
     "grunt": "^1.0.1",
     "grunt-bump": "^0.8.0",
     "grunt-cli": "^1.2.0",
     "grunt-conventional-changelog": "^6.1.0",
     "grunt-conventional-github-releaser": "^1.0.0",
-    "grunt-eslint": "^18.1.0",
+    "grunt-eslint": "^21.0.0",
     "grunt-npm": "^0.0.2",
     "grunt-simple-mocha": "^0.4.1",
-    "libxml-xsd": "^0.5.2",
-    "load-grunt-tasks": "^3.2.0",
-    "mocha": "^3.2.0",
-    "proxyquire": "^1.7.4",
-    "sinon": "^1.17.3",
-    "sinon-chai": "^2.8.0"
+    "libxmljs": "^0.19.5",
+    "load-grunt-tasks": "^4.0.0",
+    "mocha": "^5.2.0",
+    "proxyquire": "^2.1.0",
+    "sinon": "^7.2.2",
+    "sinon-chai": "^3.3.0"
   },
   "contributors": [
     "Friedel Ziegelmayer <dignifiedquire@gmail.com>",
