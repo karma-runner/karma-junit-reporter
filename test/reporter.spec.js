@@ -4,7 +4,8 @@ var chai = require('chai')
 var expect = require('chai').expect
 var sinon = require('sinon')
 var proxyquire = require('proxyquire')
-var xsd = require('libxml-xsd')
+var fs = require('fs')
+var libxmljs = require('libxmljs')
 
 // Validation schema is read from a file
 var schemaPath = './sonar-unit-tests.xsd'
@@ -99,27 +100,16 @@ describe('JUnit reporter', function () {
     nxreporter.onRunComplete()
 
     var writtenXml = fakeFs.writeFile.firstCall.args[1]
-    var extFileError = false
-    var xmlParseError = false
 
-    var validationErrorCount = 0
-    var validationErrors = null
+    var xsdString = fs.readFileSync(schemaPath)
+    var xsdDoc = libxmljs.parseXml(xsdString)
+    var xmlDoc = libxmljs.parseXml(writtenXml)
 
-    xsd.parseFile(schemaPath, function (err, schema) {
-      if (err) {
-        extFileError = true
-        xmlParseError = false
-      } else {
-        // Direct (sync) way of using the libxml-xsd
-        validationErrors = schema.validate(writtenXml)
-        if (!validationErrors) {
-          validationErrors = []
-          xmlParseError = false
-        } else {
-          validationErrorCount = validationErrors.length
-        }
-      }
-    })
+    xmlDoc.validate(xsdDoc)
+
+    var xsdParseErrorCount = xsdDoc.errors.length
+    var xmlParseErrorCount = xmlDoc.errors.length
+    var validationErrorCount = xmlDoc.validationErrors.length
 
     // The 2 tests below are "static", weak tests that find whether a
     // string is present in the XML report
@@ -127,8 +117,8 @@ describe('JUnit reporter', function () {
     expect(writtenXml).to.have.string('unitTest')
     // The below is the strict, libxml-xsd -based validation result
     expect(validationErrorCount).to.equal(0)
-    expect(extFileError).to.be.false
-    expect(xmlParseError).to.be.false
+    expect(xsdParseErrorCount).to.equal(0)
+    expect(xmlParseErrorCount).to.equal(0)
   })
 
   it('should include parent suite names in generated test names', function () {
@@ -168,7 +158,7 @@ describe('JUnit reporter', function () {
   it('should safely handle missing suite browser entries when specSuccess fires', function () {
     reporter.onRunStart([])
     // don't try to call null.ele()
-    expect(reporter.specSuccess.bind(reporter, {id: 1}, {})).to.not.throw(TypeError)
+    expect(reporter.specSuccess.bind(reporter, { id: 1 }, {})).to.not.throw(TypeError)
   })
 
   it('should safely handle invalid test result objects when onBrowserComplete fires', function () {
