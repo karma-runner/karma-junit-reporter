@@ -168,7 +168,7 @@ describe('JUnit reporter', function () {
   it('should safely handle missing suite browser entries when specSuccess fires', function () {
     reporter.onRunStart([])
     // don't try to call null.ele()
-    expect(reporter.specSuccess.bind(reporter, {id: 1}, {})).to.not.throw(TypeError)
+    expect(reporter.specSuccess.bind(reporter, { id: 1 }, {})).to.not.throw(TypeError)
   })
 
   it('should safely handle invalid test result objects when onBrowserComplete fires', function () {
