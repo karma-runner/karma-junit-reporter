@@ -21,7 +21,7 @@
   "author": "Vojta Jina <vojta.jina@gmail.com>",
   "dependencies": {
     "path-is-absolute": "^1.0.0",
-    "xmlbuilder": "8.2.2"
+    "xmlbuilder": "9.0.0"
   },
   "peerDependencies": {
     "karma": ">=0.9"
