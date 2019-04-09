@@ -22,6 +22,8 @@ var fakeHelper = {
   mkdirIfNotExists: sinon.stub().yields()
 }
 
+var fakeFormatError = sinon.spy(function (v) { return v })
+
 var fakeConfig = {
   basePath: __dirname,
   junitReporter: {
@@ -52,7 +54,7 @@ describe('JUnit reporter', function () {
   })
 
   beforeEach(function () {
-    reporter = new reporterModule['reporter:junit'][1](fakeBaseReporterDecorator, fakeConfig, fakeLogger, fakeHelper)
+    reporter = new reporterModule['reporter:junit'][1](fakeBaseReporterDecorator, fakeConfig, fakeLogger, fakeHelper, fakeFormatError)
   })
 
   it('should produce valid XML per the new SonarQube reporting format', function () {
@@ -163,6 +165,41 @@ describe('JUnit reporter', function () {
 
     var writtenXml = fakeFs.writeFile.firstCall.args[1]
     expect(writtenXml).to.have.string('testcase name="Sender using it get request should not fail"')
+  })
+
+  it('should safely handle special characters', function () {
+    var fakeBrowser = {
+      id: 'Android_4_1_2',
+      name: 'Android',
+      fullName: 'Android 4.1.2',
+      lastResult: {
+        error: false,
+        total: 1,
+        failed: 1,
+        netTime: 10 * 1000
+      }
+    }
+
+    var fakeResult = {
+      suite: [
+        'Sender',
+        'using it',
+        'get request'
+      ],
+      success: false,
+      description: 'should not fail',
+      log: ['Expected "👍" to be "👎".']
+    }
+
+    reporter.onRunStart([ fakeBrowser ])
+    reporter.specSuccess(fakeBrowser, fakeResult)
+    reporter.onBrowserComplete(fakeBrowser)
+    reporter.onRunComplete()
+
+    expect(fakeFs.writeFile).to.have.been.called
+
+    var writtenXml = fakeFs.writeFile.firstCall.args[1]
+    expect(writtenXml).to.have.string('<failure type="">Expected "👍" to be "👎".</failure>')
   })
 
   it('should safely handle missing suite browser entries when specSuccess fires', function () {
