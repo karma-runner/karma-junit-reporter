@@ -27,7 +27,7 @@
     "karma": ">=0.9"
   },
   "engines": {
-    "node": ">= 6 < 9"
+    "node": ">= 8"
   },
   "license": "MIT",
   "devDependencies": {
