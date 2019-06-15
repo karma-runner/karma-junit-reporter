@@ -21,13 +21,13 @@
   "author": "Vojta Jina <vojta.jina@gmail.com>",
   "dependencies": {
     "path-is-absolute": "^1.0.0",
-    "xmlbuilder": "8.2.2"
+    "xmlbuilder": "12.0.0"
   },
   "peerDependencies": {
     "karma": ">=0.9"
   },
   "engines": {
-    "node": ">= 6 < 9"
+    "node": ">= 8"
   },
   "license": "MIT",
   "devDependencies": {
@@ -46,7 +46,7 @@
     "grunt-eslint": "^21.0.0",
     "grunt-npm": "^0.0.2",
     "grunt-simple-mocha": "^0.4.1",
-    "libxml-xsd": "^0.5.2",
+    "libxmljs": "^0.19.5",
     "load-grunt-tasks": "^3.2.0",
     "mocha": "^3.2.0",
     "proxyquire": "^1.7.4",
@@ -88,6 +88,7 @@
     "Derek Schaller <dschaller@lyft.com>",
     "Janek Lasocki-Biczysko <j.lasocki-biczysko@intrallect.com>",
     "John Haugeland <stonecypher@gmail.com>",
-    "Kira Cheung <killercentury@gmail.com>"
+    "Kira Cheung <killercentury@gmail.com>",
+    "Julen Garcia Leunda <hicom150@gmail.com>"
   ]
 }

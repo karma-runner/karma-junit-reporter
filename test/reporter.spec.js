@@ -4,7 +4,8 @@ var chai = require('chai')
 var expect = require('chai').expect
 var sinon = require('sinon')
 var proxyquire = require('proxyquire')
-var xsd = require('libxml-xsd')
+var fs = require('fs')
+var libxmljs = require('libxmljs')
 
 // Validation schema is read from a file
 var schemaPath = './sonar-unit-tests.xsd'
@@ -21,6 +22,8 @@ var fakeHelper = {
   normalizeWinPath: noop,
   mkdirIfNotExists: sinon.stub().yields()
 }
+
+var fakeFormatError = sinon.spy(function (v) { return v })
 
 var fakeConfig = {
   basePath: __dirname,
@@ -52,7 +55,7 @@ describe('JUnit reporter', function () {
   })
 
   beforeEach(function () {
-    reporter = new reporterModule['reporter:junit'][1](fakeBaseReporterDecorator, fakeConfig, fakeLogger, fakeHelper)
+    reporter = new reporterModule['reporter:junit'][1](fakeBaseReporterDecorator, fakeConfig, fakeLogger, fakeHelper, fakeFormatError)
   })
 
   it('should produce valid XML per the new SonarQube reporting format', function () {
@@ -99,27 +102,16 @@ describe('JUnit reporter', function () {
     nxreporter.onRunComplete()
 
     var writtenXml = fakeFs.writeFile.firstCall.args[1]
-    var extFileError = false
-    var xmlParseError = false
 
-    var validationErrorCount = 0
-    var validationErrors = null
+    var xsdString = fs.readFileSync(schemaPath)
+    var xsdDoc = libxmljs.parseXml(xsdString)
+    var xmlDoc = libxmljs.parseXml(writtenXml)
 
-    xsd.parseFile(schemaPath, function (err, schema) {
-      if (err) {
-        extFileError = true
-        xmlParseError = false
-      } else {
-        // Direct (sync) way of using the libxml-xsd
-        validationErrors = schema.validate(writtenXml)
-        if (!validationErrors) {
-          validationErrors = []
-          xmlParseError = false
-        } else {
-          validationErrorCount = validationErrors.length
-        }
-      }
-    })
+    xmlDoc.validate(xsdDoc)
+
+    var xsdParseErrorCount = xsdDoc.errors.length
+    var xmlParseErrorCount = xmlDoc.errors.length
+    var validationErrorCount = xmlDoc.validationErrors.length
 
     // The 2 tests below are "static", weak tests that find whether a
     // string is present in the XML report
@@ -127,8 +119,8 @@ describe('JUnit reporter', function () {
     expect(writtenXml).to.have.string('unitTest')
     // The below is the strict, libxml-xsd -based validation result
     expect(validationErrorCount).to.equal(0)
-    expect(extFileError).to.be.false
-    expect(xmlParseError).to.be.false
+    expect(xsdParseErrorCount).to.equal(0)
+    expect(xmlParseErrorCount).to.equal(0)
   })
 
   it('should include parent suite names in generated test names', function () {
@@ -163,6 +155,41 @@ describe('JUnit reporter', function () {
 
     var writtenXml = fakeFs.writeFile.firstCall.args[1]
     expect(writtenXml).to.have.string('testcase name="Sender using it get request should not fail"')
+  })
+
+  it('should safely handle special characters', function () {
+    var fakeBrowser = {
+      id: 'Android_4_1_2',
+      name: 'Android',
+      fullName: 'Android 4.1.2',
+      lastResult: {
+        error: false,
+        total: 1,
+        failed: 1,
+        netTime: 10 * 1000
+      }
+    }
+
+    var fakeResult = {
+      suite: [
+        'Sender',
+        'using it',
+        'get request'
+      ],
+      success: false,
+      description: 'should not fail',
+      log: ['Expected "👍" to be "👎".']
+    }
+
+    reporter.onRunStart([ fakeBrowser ])
+    reporter.specSuccess(fakeBrowser, fakeResult)
+    reporter.onBrowserComplete(fakeBrowser)
+    reporter.onRunComplete()
+
+    expect(fakeFs.writeFile).to.have.been.called
+
+    var writtenXml = fakeFs.writeFile.firstCall.args[1]
+    expect(writtenXml).to.have.string('<failure type="">Expected "👍" to be "👎".</failure>')
   })
 
   it('should safely handle missing suite browser entries when specSuccess fires', function () {
