@@ -72,21 +72,21 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
     if (NEWXML) {
       suite = suites[browser.id] = builder.create('unitTest')
       suite.att('version', '1')
-      exposee = suite.ele('file', {'path': 'fixedString'})
+      exposee = suite.ele('file', { 'path': 'fixedString' })
     } else {
       suite = suites[browser.id] = builder.create('testsuite')
       suite.att('name', browser.name)
-      .att('package', pkgName)
-      .att('timestamp', timestamp)
-      .att('id', 0)
-      .att('hostname', os.hostname())
+        .att('package', pkgName)
+        .att('timestamp', timestamp)
+        .att('id', 0)
+        .att('hostname', os.hostname())
       var propertiesElement = suite.ele('properties')
-      propertiesElement.ele('property', {name: 'browser.fullName', value: browser.fullName})
+      propertiesElement.ele('property', { name: 'browser.fullName', value: browser.fullName })
 
       // add additional properties passed in through the config
       for (var property in properties) {
         if (properties.hasOwnProperty(property)) {
-          propertiesElement.ele('property', {name: property, value: properties[property]})
+          propertiesElement.ele('property', { name: property, value: properties[property] })
         }
       }
     }
@@ -101,7 +101,7 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
       newOutputFile = outputFile
     } else if (outputFile != null) {
       var dir = useBrowserName ? path.join(outputDir, safeBrowserName)
-                               : outputDir
+        : outputDir
       newOutputFile = path.join(dir, outputFile)
     } else if (useBrowserName) {
       newOutputFile = path.join(outputDir, 'TESTS-' + safeBrowserName + '.xml')
@@ -117,7 +117,7 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
 
     pendingFileWritings++
     helper.mkdirIfNotExists(path.dirname(newOutputFile), function () {
-      fs.writeFile(newOutputFile, xmlToOutput.end({pretty: true}), function (err) {
+      fs.writeFile(newOutputFile, xmlToOutput.end({ pretty: true }), function (err) {
         if (err) {
           log.warn('Cannot write JUnit xml\n\t' + err.message)
         } else {
@@ -239,10 +239,10 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
     if (!result.success) {
       result.log.forEach(function (err) {
         if (!NEWXML) {
-          spec.ele('failure', {type: ''}, formatError(err))
+          spec.ele('failure', { type: '' }, formatError(err))
         } else {
         // In new XML format, an obligatory 'message' attribute in failure
-          spec.ele('failure', {message: formatError(err)})
+          spec.ele('failure', { message: formatError(err) })
         }
       })
     }
