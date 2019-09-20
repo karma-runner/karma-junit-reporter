@@ -29,6 +29,7 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
   // The below two variables have to do with adding support for new SonarQube XML format
   var XMLconfigValue = reporterConfig.xmlVersion
   var NEWXML
+  var gitlab = reporterConfig.gitlab
   // We need one global variable for the tag <file> to be visible to functions
   var exposee
   var suites = []
@@ -74,7 +75,12 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
       suite.att('version', '1')
       exposee = suite.ele('file', {'path': 'fixedString'})
     } else {
-      suite = suites[browser.id] = builder.create('testsuite')
+      if (gitlab === true) {
+        var root = builder.create('testsuites')
+        suite = suites[browser.id] = root.ele('testsuite')
+      } else {
+        suite = suites[browser.id] = builder.create('testsuite')
+      }
       suite.att('name', browser.name)
       .att('package', pkgName)
       .att('timestamp', timestamp)
