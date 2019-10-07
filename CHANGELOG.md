@@ -1,3 +1,32 @@
+<a name="2.0.0"></a>
+# [2.0.0](https://github.com/karma-runner/karma-junit-reporter/compare/v1.2.0...v2.0.0) (2019-10-07)
+
+
+### Bug Fixes
+
+* allow special characters and emoji in output ([59fd3c6](https://github.com/karma-runner/karma-junit-reporter/commit/59fd3c6))
+
+
+### Chores
+
+* **travis:** Drop old nodejs version: NO v10 ([#164](https://github.com/karma-runner/karma-junit-reporter/issues/164)) ([bc07177](https://github.com/karma-runner/karma-junit-reporter/commit/bc07177))
+* remove support for node 6 ([435cb5e](https://github.com/karma-runner/karma-junit-reporter/commit/435cb5e))
+
+
+### Features
+
+* support for new XML format (per SonarQube)  ([b0984e0](https://github.com/karma-runner/karma-junit-reporter/commit/b0984e0))
+
+
+### BREAKING CHANGES
+
+* Drop Support for Node 6, to make it possible to use async/await in karma codebase.
+* **travis:** no support for node < 6
+
+* node 10 not supported by libxmljs-mt
+
+
+
 <a name="1.2.0"></a>
 # [1.2.0](https://github.com/karma-runner/karma-junit-reporter/compare/v1.1.0...v1.2.0) (2016-12-06)
 
