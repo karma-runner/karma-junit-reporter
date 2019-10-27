@@ -89,7 +89,7 @@ plugins: [
 ```
 
 Sonar property example:
-```js
+```
 sonar.projectName=js
 sonar.sources=site-main-php/src/main/webapp/public/js
 sonar.projectBaseDir=.
