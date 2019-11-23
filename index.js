@@ -2,51 +2,126 @@ var os = require('os')
 var path = require('path')
 var fs = require('fs')
 var builder = require('xmlbuilder')
+var pathIsAbsolute = require('path-is-absolute')
+
+/* XML schemas supported by the reporter: 'xmlVersion' in karma.conf.js,
+   'XMLconfigValue' as variable here.
+   0 = "old", original XML format. For example, SonarQube versions prior to 6.2
+   1 = first amended version. Compatible with SonarQube starting from 6.2
+*/
+
+// concatenate test suite(s) and test description by default
+function defaultNameFormatter (browser, result) {
+  return result.suite.join(' ') + ' ' + result.description
+}
 
 var JUnitReporter = function (baseReporterDecorator, config, logger, helper, formatError) {
   var log = logger.create('reporter.junit')
   var reporterConfig = config.junitReporter || {}
+  // All reporterConfig.something are for reading flags from the Karma config file
   var pkgName = reporterConfig.suite || ''
-
-  if (!reporterConfig.outputDir) {
-    throw new Error('You must set an output directory for JUnitReporter via the outputDir config property')
-  }
-
-  var outputDir = helper.normalizeWinPath(path.resolve(config.basePath, reporterConfig.outputDir)) + path.sep
-  var suites
+  var outputDir = reporterConfig.outputDir
+  var outputFile = reporterConfig.outputFile
+  var useBrowserName = reporterConfig.useBrowserName
+  var nameFormatter = reporterConfig.nameFormatter || defaultNameFormatter
+  var classNameFormatter = reporterConfig.classNameFormatter
+  var properties = reporterConfig.properties
+  // The below two variables have to do with adding support for new SonarQube XML format
+  var XMLconfigValue = reporterConfig.xmlVersion
+  var NEWXML
+  // We need one global variable for the tag <file> to be visible to functions
+  var exposee
+  var suites = []
   var pendingFileWritings = 0
   var fileWritingFinished = function () {}
   var allMessages = []
 
+  // The NEWXML is just sugar, a flag. Remove it when there are more than 2
+  // supported XML output formats.
+  if (!XMLconfigValue) {
+    XMLconfigValue = 0
+    NEWXML = false
+  } else {
+    // Slack behavior: "If defined, assume to be 1" since we have only two formats now
+    XMLconfigValue = 1
+    NEWXML = true
+  }
+
+  if (outputDir == null) {
+    outputDir = '.'
+  }
+
+  outputDir = helper.normalizeWinPath(path.resolve(config.basePath, outputDir)) + path.sep
+
+  if (typeof useBrowserName === 'undefined') {
+    useBrowserName = true
+  }
+
   baseReporterDecorator(this)
 
-  this.adapters = [function (msg) {
-    allMessages.push(msg)
-  }]
+  this.adapters = [
+    function (msg) {
+      allMessages.push(msg)
+    }
+  ]
 
-  var initliazeXmlForBrowser = function (browser) {
+  // Creates the outermost XML element: <unitTest>
+  var initializeXmlForBrowser = function (browser) {
     var timestamp = (new Date()).toISOString().substr(0, 19)
-    var suite = suites[browser.id] = builder.create('testsuite')
-    suite.att('name', browser.name)
+    var suite
+    if (NEWXML) {
+      suite = suites[browser.id] = builder.create('unitTest')
+      suite.att('version', '1')
+      exposee = suite.ele('file', {'path': 'fixedString'})
+    } else {
+      suite = suites[browser.id] = builder.create('testsuite')
+      suite.att('name', browser.name)
       .att('package', pkgName)
       .att('timestamp', timestamp)
       .att('id', 0)
       .att('hostname', os.hostname())
-    suite.ele('properties')
-      .ele('property', {name: 'browser.fullName', value: browser.fullName})
+      var propertiesElement = suite.ele('properties')
+      propertiesElement.ele('property', {name: 'browser.fullName', value: browser.fullName})
+
+      // add additional properties passed in through the config
+      for (var property in properties) {
+        if (properties.hasOwnProperty(property)) {
+          propertiesElement.ele('property', {name: property, value: properties[property]})
+        }
+      }
+    }
   }
 
+  // This function takes care of writing the XML into a file
   var writeXmlForBrowser = function (browser) {
-    var outputFile = outputDir + browser.name.replace(/ /g, '_') + '.xml'
+    // Define the file name using rules
+    var safeBrowserName = browser.name.replace(/ /g, '_')
+    var newOutputFile
+    if (outputFile && pathIsAbsolute(outputFile)) {
+      newOutputFile = outputFile
+    } else if (outputFile != null) {
+      var dir = useBrowserName ? path.join(outputDir, safeBrowserName)
+                               : outputDir
+      newOutputFile = path.join(dir, outputFile)
+    } else if (useBrowserName) {
+      newOutputFile = path.join(outputDir, 'TESTS-' + safeBrowserName + '.xml')
+    } else {
+      newOutputFile = path.join(outputDir, 'TESTS.xml')
+    }
+
     var xmlToOutput = suites[browser.id]
 
+    if (!xmlToOutput) {
+      return // don't die if browser didn't start
+    }
+
     pendingFileWritings++
-    helper.mkdirIfNotExists(outputDir, function () {
-      fs.writeFile(outputFile, xmlToOutput.end({pretty: true}), function (err) {
+    helper.mkdirIfNotExists(path.dirname(newOutputFile), function () {
+      fs.writeFile(newOutputFile, xmlToOutput.end({pretty: true}), function (err) {
         if (err) {
           log.warn('Cannot write JUnit xml\n\t' + err.message)
         } else {
-          log.debug('JUnit results written to "%s".', outputFile)
+          log.debug('JUnit results written to "%s".', newOutputFile)
         }
 
         if (!--pendingFileWritings) {
@@ -56,61 +131,107 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
     })
   }
 
+  // Return a 'safe' name for test. This will be the name="..." content in XML.
+  var getClassName = function (browser, result) {
+    var name = ''
+    // configuration tells whether to use browser name at all
+    if (useBrowserName) {
+      name += browser.name
+        .replace(/ /g, '_')
+        .replace(/\./g, '_') + '.'
+    }
+    if (pkgName) {
+      name += '.'
+    }
+    if (result.suite && result.suite.length > 0) {
+      name += result.suite.join(' ')
+    }
+    return name
+  }
+
+  // "run_start" - a test run is beginning for all browsers
   this.onRunStart = function (browsers) {
-    suites = Object.create(null)
-
     // TODO(vojta): remove once we don't care about Karma 0.10
-    browsers.forEach(initliazeXmlForBrowser)
+    browsers.forEach(initializeXmlForBrowser)
   }
 
+  // "browser_start" - a test run is beginning in _this_ browser
   this.onBrowserStart = function (browser) {
-    initliazeXmlForBrowser(browser)
+    initializeXmlForBrowser(browser)
   }
 
+  // "browser_complete" - a test run has completed in _this_ browser
+  // writes the XML to file and releases memory
   this.onBrowserComplete = function (browser) {
     var suite = suites[browser.id]
+    var result = browser.lastResult
+    if (!suite || !result) {
+      return // don't die if browser didn't start
+    }
 
-    if (!suite) {
-      // This browser did not signal `onBrowserStart`. That happens
-      // if the browser timed out during the start phase or javascript
-      // exception has occured.
-      initliazeXmlForBrowser(browser)
-      if (browser.lastResult.error) {
-        suite = suites[browser.id]
-        suite.ele('error').dat(allMessages.join() + '\n')
-        allMessages = []
-      }
-    } else {
-      var result = browser.lastResult
-
-      suite.att('tests', result.total)
+    if (!NEWXML) {
+      suite.att('tests', result.total ? result.total : 0)
       suite.att('errors', result.disconnected || result.error ? 1 : 0)
       suite.att('failures', result.failed)
       suite.att('skipped', result.skipped)
       suite.att('time', (result.netTime || 0) / 1000)
-
-      if (result.disconnected) {
-        suite.ele('error').att('message', 'Browser disconnected')
-      }
-
       suite.ele('system-out').dat(allMessages.join() + '\n')
-      allMessages = []
       suite.ele('system-err')
     }
 
     writeXmlForBrowser(browser)
+
+    // Release memory held by the test suite.
+    suites[browser.id] = null
   }
 
+  // "run_complete" - a test run has completed on all browsers
   this.onRunComplete = function () {
-    suites = null
     allMessages.length = 0
   }
 
+  // --------------------------------------------
+  // | Producing XML for individual testCase    |
+  // --------------------------------------------
   this.specSuccess = this.specSkipped = this.specFailure = function (browser, result) {
-    var spec = suites[browser.id].ele('testcase', {
-      name: result.description, time: ((result.time || 0) / 1000),
-      classname: (pkgName ? pkgName + ' ' : '') + result.suite.join(' ').replace(/\./g, '_')
-    })
+    var testsuite = suites[browser.id]
+    var validMilliTime
+    var spec
+
+    if (!testsuite) {
+      return
+    }
+
+    // New in the XSD schema: only name and duration. classname is obsoleted
+    if (NEWXML) {
+      if (!result.time || result.time === 0) {
+        validMilliTime = 1
+      } else {
+        validMilliTime = result.time
+      }
+    }
+
+    // create the tag for a new test case
+    /*
+    if (NEWXML) {
+      spec = testsuite.ele('testCase', {
+      name: nameFormatter(browser, result),
+      duration: validMilliTime })
+    }
+    */
+
+    if (NEWXML) {
+      spec = exposee.ele('testCase', {
+        name: nameFormatter(browser, result),
+        duration: validMilliTime })
+    } else {
+      // old XML format. Code as-was
+      spec = testsuite.ele('testcase', {
+        name: nameFormatter(browser, result),
+        time: ((result.time || 0) / 1000),
+        classname: (typeof classNameFormatter === 'function' ? classNameFormatter : getClassName)(browser, result)
+      })
+    }
 
     if (result.skipped) {
       spec.ele('skipped')
@@ -118,7 +239,12 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
 
     if (!result.success) {
       result.log.forEach(function (err) {
-        spec.ele('failure', {type: ''}, formatError(err))
+        if (!NEWXML) {
+          spec.ele('failure', {type: ''}, formatError(err))
+        } else {
+        // In new XML format, an obligatory 'message' attribute in failure
+          spec.ele('failure', {message: formatError(err)})
+        }
       })
     }
   }
