@@ -141,7 +141,7 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
         .replace(/\./g, '_') + '.'
     }
     if (pkgName) {
-      name += '.'
+      name += pkgName + '.'
     }
     if (result.suite && result.suite.length > 0) {
       name += result.suite.join(' ')
