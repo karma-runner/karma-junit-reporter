@@ -15,6 +15,10 @@ function defaultNameFormatter (browser, result) {
   return result.suite.join(' ') + ' ' + result.description
 }
 
+function defaultSuiteNameFormatter (browser) {
+  return browser.name
+}
+
 var JUnitReporter = function (baseReporterDecorator, config, logger, helper, formatError) {
   var log = logger.create('reporter.junit')
   var reporterConfig = config.junitReporter || {}
@@ -25,6 +29,7 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
   var useBrowserName = reporterConfig.useBrowserName
   var nameFormatter = reporterConfig.nameFormatter || defaultNameFormatter
   var classNameFormatter = reporterConfig.classNameFormatter
+  var suiteNameFormatter = reporterConfig.suiteNameFormatter || defaultSuiteNameFormatter
   var properties = reporterConfig.properties
   // The below two variables have to do with adding support for new SonarQube XML format
   var XMLconfigValue = reporterConfig.xmlVersion
@@ -75,11 +80,14 @@ var JUnitReporter = function (baseReporterDecorator, config, logger, helper, for
       exposee = suite.ele('file', {'path': 'fixedString'})
     } else {
       suite = suites[browser.id] = builder.create('testsuite')
-      suite.att('name', browser.name)
+      suite.att('name', suiteNameFormatter(browser))
       .att('package', pkgName)
       .att('timestamp', timestamp)
       .att('id', 0)
       .att('hostname', os.hostname())
+
+      suite.att('browser', browser.name)
+
       var propertiesElement = suite.ele('properties')
       propertiesElement.ele('property', {name: 'browser.fullName', value: browser.fullName})
 
